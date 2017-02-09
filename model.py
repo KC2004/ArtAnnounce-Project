@@ -29,7 +29,7 @@ class User(db.Model):
     login = db.Column(db.String(25), db.ForeignKey('app_users.login'), nullable=True)
     patron_id = db.Column(db.Integer, db.ForeignKey('patrons.patron_id'), nullable=True)
     fan_id = db.Column(db.Integer, db.ForeignKey('fans.fan_id'), nullable=True)
-    social_media_id = db.Column(db.Integer, db.ForeignKey('users_socialmedia.user_sm_id'), nullable=True)
+    
 
     app_user = db.relationship('AppUsers')
     address = db.relationship('Address')
@@ -43,6 +43,19 @@ class User(db.Model):
         return "<User user_id=%s name=%s %s >" % (self.user_id,
                                                 self.first_name,
                                                 self.last_name)
+
+class TwitterUser(db.Model):
+    twitter_handle = db.Column(db.String(20), primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+
+    user = db.relationship('User')
+    
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        return "<User_id %s, Twiiter handle: %s>" % (self.user_id,
+                                                    self.twitter_handle)
+
 
 
 class AppUsers(db.Model):
@@ -62,23 +75,23 @@ class AppUsers(db.Model):
         return "<Login info: classified>" 
 
 
-class AuthorizationCodes(db.Model):
-    """App user's authorization info for different social media sites"""
-    """"work in progress"""
+# class AuthorizationCodes(db.Model):
+#     """App user's authorization info for different social media sites"""
+#     """"work in progress"""
 
-    __tablename__ = "authorizations"
+#     __tablename__ = "authorizations"
     
-    auth_id = db.Column(db.String(20), primary_key=True)
-    login = db.Column(db.String(20), primary_key=True)
-    password = db.Column(db.String(20), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+#     auth_id = db.Column(db.String(20), primary_key=True)
+#     login = db.Column(db.String(20), primary_key=True)
+#     password = db.Column(db.String(20), nullable=False)
+#     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     
-    user = db.relationship('User')
+#     user = db.relationship('User')
     
-    def __repr__(self):
-        """Provide helpful representation when printed."""
+#     def __repr__(self):
+#         """Provide helpful representation when printed."""
 
-        return "<Login info: classified>" 
+#         return "<Login info: classified>" 
 
 class Address(db.Model):
     """Addresses of users"""
@@ -117,9 +130,7 @@ class Artist(db.Model):
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<Artist_id: %s, %s %s>" % (self.artist_id,
-                                                self.user.first_name
-                                                self.user.last_name)
+        return "<Artist_id: %s>" % (self.artist_id)
 
 
 class Patron(db.Model):
@@ -153,24 +164,6 @@ class ArtFan(db.Model):
         return "<Fan id: %s>" % (self.fan_id)
 
 
-
-class UsersTwitterInfo(db.Model):
-    """Social Media Info for users"""
-
-    __tablename__ = "users_socialmedia"
-    
-    twitter_handle = db.Column(db.String(20), primary_key=True)
-    user_id = db.Column(db.Integer, 
-                        db.ForeignKey('users.user_id'))
-    
-    user = db.relationship('User')
-    
-    def __repr__(self):
-        """Provide helpful representation when printed."""
-
-        return "<User_id: %s, Twitter Handle: %s>" % (self.user_id, self.twitter_handle)
-
-
 ##############################################################################
 # ArtWork and Sharing Tables
 ##############################################################################
@@ -184,13 +177,13 @@ class Artwork(db.Model):
     artist_id = db.Column(db.Integer, db.ForeignKey('artists.artist_id'))
     title = db.Column(db.String(50), nullable=True)
     year_created = db.Column(db.Integer, nullable=True)
-    medium_id = db.Column(db.Integer, db.ForeignKey('medium.medium_id'))
-    substrate_id = db.Column(db.Integer, db.ForeignKey('substrate.substrate_id'))
-    genre_id = db.Column(db.Integer, db.ForeignKey('genre.genre_id'))
+    medium_id = db.Column(db.Integer, db.ForeignKey('mediums.medium_id'))
+    substrate_id = db.Column(db.Integer, db.ForeignKey('substrates.substrate_id'))
+    genre_id = db.Column(db.Integer, db.ForeignKey('genres.genre_id'))
     length = db.Column(db.Integer, nullable=True)
     height = db.Column(db.Integer, nullable=True)
     depth = db.Column(db.Integer, nullable=True)
-    availability_id = db.Column(db.Integer, db.ForeignKey('availability.availability_id'))
+    availability_id = db.Column(db.Integer, db.ForeignKey('availabilities.availability_id'))
 
     artist = db.relationship('Artist')
     medium = db.relationship('Medium')
@@ -280,7 +273,7 @@ class Gallery(db.Model):
 
     __tablename__ = "galleries"
     
-    gallery_id = db.Column(db.Integer, autoincrement=true, primary_key=True)
+    gallery_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     name = db.Column(db.String(20), nullable=False)
     address_id = db.Column(db.String(200), nullable=False)
     # genre_id = db.Column(db.Integer, db.ForeignKey('genres.genre_id'), nullable=True)
@@ -360,7 +353,7 @@ class ArtShareInfo(db.Model):
 
         return "<Caption: %s\nArtshareInfo id: %s\nSocialMedia id: %s\nArtwork_id id:%s\n>" % ( self.caption,
                                                             self.artshare_id,
-                                                            self.socialmedia_id
+                                                            self.socialmedia_id,
                                                             self.artwork_id)
 
 class SocialMedia(db.Model):
@@ -374,9 +367,9 @@ class SocialMedia(db.Model):
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<SocialMedia id: %s\Social Media name:%s\n>" % ( self.socialmedia_id
+        return "<SocialMedia id: %s\Social Media name:%s\n>" % ( self.socialmedia_id,
                                                             self.socialmedia_name)
- l
+
 
 ##############################################################################
 # Helper functions
