@@ -3,7 +3,7 @@
 from jinja2 import StrictUndefined
 from flask_debugtoolbar import DebugToolbarExtension
 from flask import Flask, jsonify, render_template, redirect, request, flash, session, url_for
-from model import User, AppUser, connect_to_db, db
+from model import User, AppUser, Address, connect_to_db, db
 
 
 app = Flask(__name__)
@@ -100,11 +100,32 @@ def register_form():
 def register_process():
     """Registration page"""
 
-    email = request.form.get('email')
+    login = request.form.get('login')
     password = request.form.get('pwd')
+    first_name = request.form.get('first_name')
+    last_name = request.form.get('last_name')
+    email = request.form.get('email')
+    phone = request.form.get('phone')
+    add_line1 = request.form.get('add_line1')
+    add_line2 = request.form.get('add_line2')
+    city = request.form.get('city')
+    state = request.form.get('state')
+    zip_code = request.form.get('zip_code')
+    country = request.form.get('country')
 
+ 
     # if user does not exist, add to db
-    user = AppUser(login=email, password=password)
+    app_user = AppUser(login=login, password=password)
+    address = Address(addresss_line1=add_line1, addresss_line2=add_line2, city=city, state=state, 
+        zip_code=zip_code, country=country)
+
+    db.session.add(address)
+    db.session.add(app_user)
+
+    db.session.commit()
+    # user.address_id = address
+    user = User(first_name=first_name, last_name=last_name, email=email, 
+        phone=phone, login=login, address_id=address.address_id)
     db.session.add(user)
     db.session.commit()
     session['email'] = email

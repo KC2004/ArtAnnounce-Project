@@ -30,7 +30,7 @@ class User(db.Model):
     artist_id = db.Column(db.Integer, db.ForeignKey('artists.artist_id'), nullable=True)
     patron_id = db.Column(db.Integer, db.ForeignKey('patrons.patron_id'), nullable=True)
     fan_id = db.Column(db.Integer, db.ForeignKey('fans.fan_id'), nullable=True)
-    
+  
 
     app_user = db.relationship('AppUser')
     address = db.relationship('Address')
@@ -55,7 +55,7 @@ class TwitterUser(db.Model):
     def __repr__(self):
         """Provide helpful representation when printed."""
 
-        return "<User_id %s, Twiiter handle: %s>" % (self.user_id,
+        return "<User_id %s, Twitter handle: %s>" % (self.user_id,
                                                     self.twitter_handle)
 
 
@@ -69,7 +69,7 @@ class AppUser(db.Model):
     password = db.Column(db.String(20), nullable=False)
     # authorization_code_id = db.Column(db.Integer, db.ForeignKey('authorizations.auth_id'), nullable=True)
     
-    user = db.relationship('User')
+    # user = db.relationship('User')
     
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -77,23 +77,6 @@ class AppUser(db.Model):
         return "<Login info: classified>" 
 
 
-# class AuthorizationCodes(db.Model):
-#     """App user's authorization info for different social media sites"""
-#     """"work in progress"""
-
-#     __tablename__ = "authorizations"
-    
-#     auth_id = db.Column(db.String(20), primary_key=True)
-#     login = db.Column(db.String(20), primary_key=True)
-#     password = db.Column(db.String(20), nullable=False)
-#     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-    
-#     user = db.relationship('User')
-    
-#     def __repr__(self):
-#         """Provide helpful representation when printed."""
-
-#         return "<Login info: classified>" 
 
 class Address(db.Model):
     """Addresses of users"""
@@ -126,7 +109,7 @@ class Artist(db.Model):
     Bio = db.Column(db.String(2000), nullable=True)
     statement = db.Column(db.String(500), nullable=True)
    
-    user = db.relationship('User')
+    # user = db.relationship('User')
     
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -135,7 +118,7 @@ class Artist(db.Model):
 
 
 class Patron(db.Model):
-    """Artist's info"""
+    """Patron's info"""
 
     __tablename__ = "patrons"
 
@@ -163,6 +146,26 @@ class ArtFan(db.Model):
         """Provide helpful representation when printed."""
 
         return "<Fan id: %s>" % (self.fan_id)
+
+
+# class AuthorizationCodes(db.Model):
+#     """App user's authorization info for different social media sites"""
+#     """"work in progress"""
+
+#     __tablename__ = "authorizations"
+    
+#     auth_id = db.Column(db.String(20), primary_key=True)
+#     login = db.Column(db.String(20), primary_key=True)
+#     password = db.Column(db.String(20), nullable=False)
+#     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    
+#     user = db.relationship('User')
+    
+#     def __repr__(self):
+#         """Provide helpful representation when printed."""
+
+#         return "<Login info: classified>" 
+
 
 
 ##############################################################################
