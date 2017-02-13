@@ -33,7 +33,7 @@ class User(db.Model):
   
 
     app_user = db.relationship('AppUser')
-    address = db.relationship('Address')
+    address = db.relationship('Address', backref='users')
     artist = db.relationship('Artist')
     patron = db.relationship('Patron')
     fan = db.relationship('ArtFan')

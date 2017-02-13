@@ -115,17 +115,18 @@ def register_process():
 
  
     # if user does not exist, add to db
-    app_user = AppUser(login=login, password=password)
-    address = Address(addresss_line1=add_line1, addresss_line2=add_line2, city=city, state=state, 
+    user = User(first_name=first_name, last_name=last_name, email=email, 
+        phone=phone, login=login)
+    user.address = Address(addresss_line1=add_line1, addresss_line2=add_line2, city=city, state=state, 
         zip_code=zip_code, country=country)
+    app_user = AppUser(login=login, password=password)
+    
 
-    db.session.add(address)
     db.session.add(app_user)
 
     db.session.commit()
     # user.address_id = address
-    user = User(first_name=first_name, last_name=last_name, email=email, 
-        phone=phone, login=login, address_id=address.address_id)
+    
     db.session.add(user)
     db.session.commit()
     session['email'] = email
