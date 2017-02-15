@@ -78,6 +78,33 @@ def login_form():
             flash('You are successfully logged in %s' % session['login'])
             return render_template("welcome.html")
 
+@app.route('/show_art_page')
+def show_art():
+    """show art page"""
+
+    return render_template("show_art_page.html")
+
+
+@app.route('/artists_artwork')
+def show_artists_art():
+    """show art work of a particular Artist"""
+
+    return render_template("artwork_page.html")
+
+
+@app.route('/share_art')
+def share_art():
+    """show art work of a particular Artist"""
+
+    return render_template("share_art_page.html")
+
+
+@app.route('/add_art')
+def add_art():
+    """show art work of a particular Artist"""
+
+    return render_template("add_art_page.html")
+
 
 @app.route('/register')
 def register_form():

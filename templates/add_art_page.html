@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Add Artwork</h1>
+<h3>Please register: </h3>
+<form action="/add_art" method="POST">
+	<label>login
+    <input id="email_id" type="text" name="login">
+    </label>
+    <label>Password
+    <input type="text" name="pwd">
+    </label><br><br>
+    <label>First Name:
+    <input type="text" name="first_name">
+    </label><br>
+    <label>Last Name:
+    <input type="text" name="last_name">
+    </label><br>
+    <label>email:
+    <input type="text" name="email">
+    </label><br>
+    <label>Phone:
+    <input type="text" name="phone">
+    </label><br>
+    <label>line 1:
+    <input type="text" name="add_line1">
+    </label><br>
+    <label>line 2:
+    <input type="text" name="add_line2">
+    </label><br>
+    <label>City:
+    <input type="text" name="city">
+    </label><br>
+    <label>State:
+    <input type="text" name="state">
+    </label>Zip code:
+    <input type="text" name="zip_code">
+    </label><br>
+    <label>Country:
+    <input type="text" name="country">
+    </lable><br>
+    <label>Twitter Handle (optional):
+    <input type="text" name="twitter_handle">
+    </lable><br>
+
+	<input type="checkbox" name="user_type" value="artist"> Artist<br>
+	<input type="checkbox" name="user_type" value="patron" > Patron<br>
+	<input type="checkbox" name="user_type" value="fan" > Fan<br>
+
+    <input type="submit" value="Register">
+</form>
+{% endblock %}

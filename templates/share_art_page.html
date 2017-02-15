@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Share Art on your favorite Social Media</h1>
+<h3>Pick the Social media site and Frequency </h3>
+<form action="/share_art" method="POST">
+	<label>Artist
+    <input id="email_id" type="text" name="login">
+    </label>
+    <label>index
+    <input type="text" name="pwd">
+    </label><br><br>
+    <label>Frequency:
+    <input type="text" name="first_name">
+    </label><br>
+    <label>Interval:
+    <input type="text" name="last_name">
+    </label><br>
+    <label>Number of Artwork:
+    <input type="text" name="email">
+    </label><br>
+    
+
+    <input type="submit" value="Register">
+</form>
+{% endblock %}

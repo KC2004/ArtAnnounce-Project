@@ -4,19 +4,41 @@
 <h1>Welcome to ArtShare</h1>
 
 <table class="table">
-    <tr>
-        <td class="col-md-2">
-            <button class="btn btn-default" id="show_art">Show Artwork</button>
+        <tr>
+            <td class="col-md-2">
+            <a href="/show_art_page" id="show_art">Show Artwork</a>
         </td>
         <td class="col-md-2">
-            <button class="btn btn-default" id="add_art">Add Artwork</button>
+            <a href="/show_art_page" id="add_art">Add Artwork</a>
         </td>
         <td class="col-md-2">
-            <button class="btn btn-default" id="share_art">Share Artwork</button>
+            <a href="/show_art_page" id="share_art">Share Artwork</button>
         </td>
     </tr>
 </table>
 
-<script type="text/javascript"></script>
+<script src="https://code.jquery.com/jquery.js"></script>
+<script>
+    "use strict";
+
+
+/*    var myImage = $("img#coffee_image");
+*/    
+    var show_art = $("#show_art");
+    var add_art = $("#add_art");
+    var share_art = $("#share_art");
+
+/*    myImage.on("click", function(evt) { return makeCoffee("brew");});
+    espresso.on("click", function(evt) { return makeCoffee("espresso");});
+    latte.on("click", function(evt) { return makeCoffee("latte");});
+    hotChocolate.on("click", function(evt) { return makeCoffee("hot-chocolate");});*/
+
+    /*show_art.click(function() {
+        window.location.href = 'show_art_page';
+        return false;
+    });*/
+  
+      
+</script>
 
 {% endblock %}
