@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Fan Info</h1>
+
+<form action="/fanInfo" method="POST">
+    <label>Fan Info:
+	    <div>
+	    <textarea name="fan_info"></textarea>
+	  	</div>
+    </label>
+    <input type="hidden" name="user_id" value='{{ user_id }}'>
+    <input type="submit" value="submit">
+</form>
+
+{% endblock %}

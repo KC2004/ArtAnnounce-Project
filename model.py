@@ -27,18 +27,10 @@ class User(db.Model):
     phone = db.Column(db.String(50), nullable=True)
     address_id = db.Column(db.Integer, db.ForeignKey('addresses.address_id'), nullable=True)
     login = db.Column(db.String(25), db.ForeignKey('app_users.login'), nullable=True)
-    artist_id = db.Column(db.Integer, db.ForeignKey('artists.artist_id'), nullable=True)
-    patron_id = db.Column(db.Integer, db.ForeignKey('patrons.patron_id'), nullable=True)
-    fan_id = db.Column(db.Integer, db.ForeignKey('fans.fan_id'), nullable=True)
-  
 
     app_user = db.relationship('AppUser')
-    address = db.relationship('Address', backref='users')
-    artist = db.relationship('Artist')
-    patron = db.relationship('Patron')
-    fan = db.relationship('ArtFan')
-    # users_sm = db.relationship('UsersSocialMediaInfo')
-    
+    address = db.relationship('Address', backref=db.backref('user'))
+
     def __repr__(self):
         """Provide helpful representation when printed."""
 
@@ -50,7 +42,7 @@ class TwitterUser(db.Model):
     twitter_handle = db.Column(db.String(20), primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
 
-    user = db.relationship('User')
+    user = db.relationship('User', backref=db.backref('twitter_user'))
     
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -84,11 +76,11 @@ class Address(db.Model):
     __tablename__ = "addresses"
 
     address_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    addresss_line1 = db.Column(db.String(100), nullable=True)
-    addresss_line2 = db.Column(db.String(100), nullable=True)
+    address_line1 = db.Column(db.String(100), nullable=True)
+    address_line2 = db.Column(db.String(100), nullable=True)
     city = db.Column(db.String(30), nullable=True)
     state = db.Column(db.String(5), nullable=True)
-    zip_code = db.Column(db.Integer, nullable=True)
+    zip_code = db.Column(db.String(12), nullable=True)
     country = db.Column(db.String(30), nullable=True)
     
 
@@ -106,11 +98,14 @@ class Artist(db.Model):
     __tablename__ = "artists"
 
     artist_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    Bio = db.Column(db.String(2000), nullable=True)
+    bio = db.Column(db.String(2000), nullable=True)
     statement = db.Column(db.String(500), nullable=True)
-   
-    # user = db.relationship('User')
-    
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    # jpg = db.Column(db.Blob, nullable=True)
+
+    user = db.relationship('User', backref=db.backref('artist'))
+
+
     def __repr__(self):
         """Provide helpful representation when printed."""
 
@@ -123,9 +118,11 @@ class Patron(db.Model):
     __tablename__ = "patrons"
 
     patron_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    patron_info = db.Column(db.String(250), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     
-    user = db.relationship('User')
     artworks = db.relationship('Artwork', secondary='artwork_patron')
+    user = db.relationship('User', backref=db.backref('patron'))
     
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -139,8 +136,10 @@ class ArtFan(db.Model):
     __tablename__ = "fans"
 
     fan_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    
-    user = db.relationship('User')
+    patron_info = db.Column(db.String(250), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+
+    user = db.relationship('User', backref=db.backref('fan'))
     
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -187,6 +186,8 @@ class Artwork(db.Model):
     length = db.Column(db.Integer, nullable=True)
     height = db.Column(db.Integer, nullable=True)
     depth = db.Column(db.Integer, nullable=True)
+    url = db.Column(db.String(200), nullable=True)
+    # jpg = db.Column(db.Blob, nullable=True)
     availability_id = db.Column(db.Integer, db.ForeignKey('availabilities.availability_id'))
 
     artist = db.relationship('Artist')
@@ -212,7 +213,7 @@ class Medium(db.Model):
 
     __tablename__ = "mediums"
     
-    medium_id = db.Column(db.String(5), primary_key=True)
+    medium_id = db.Column(db.Integer, primary_key=True)
     medium = db.Column(db.String(20), nullable=False)
     
     def __repr__(self):
@@ -226,7 +227,7 @@ class Substrate(db.Model):
 
     __tablename__ = "substrates"
     
-    substrate_id = db.Column(db.String(5), primary_key=True)
+    substrate_id = db.Column(db.Integer, primary_key=True)
     substrate = db.Column(db.String(20), nullable=False)
     
     def __repr__(self):
@@ -241,7 +242,7 @@ class Genre(db.Model):
 
     __tablename__ = "genres"
     
-    genre_id = db.Column(db.String(5), primary_key=True)
+    genre_id = db.Column(db.Integer, primary_key=True)
     genre = db.Column(db.String(20), nullable=False)
     
     def __repr__(self):
@@ -321,7 +322,7 @@ class Artwork_Patron(db.Model):
 
     __tablename__ = "artwork_patron"
     
-    avail_ptrn_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    artwork_ptrn_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     artwork_id = db.Column(db.Integer, 
                         db.ForeignKey('artworks.artwork_id'),
                         nullable=False)

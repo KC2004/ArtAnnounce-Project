@@ -3,7 +3,7 @@
 from jinja2 import StrictUndefined
 from flask_debugtoolbar import DebugToolbarExtension
 from flask import Flask, jsonify, render_template, redirect, request, flash, session, url_for
-from model import User, AppUser, Address, connect_to_db, db
+from model import User, AppUser, Address, Artist, Patron, ArtFan, connect_to_db, db
 
 
 app = Flask(__name__)
@@ -56,43 +56,32 @@ def login():
 def login_form():
     """Handle submission of login form"""
 
-    email = request.form.get('email')
+    mylogin = request.form.get('login')
     password = request.form.get('pwd')
 
-    # login page gets email and pwd, then redirects to home page?
-        # if user doesnt exist, go to /register route, and add them to the db?
-
     # check to see if user exists
-    user_rec = User.query.filter_by(email=email).first()
+    user_rec = AppUser.query.filter_by(login=mylogin).first()
 
-    # print user_rec
-    # TODO: check to see if submitted password matches user_rec.pass in db
-
+    # if user doesn't exist, send to Registration page.
     if not user_rec:
-        # call other post and add to db?
-        # if pwd doessnt match, reload form with alert try again
         return render_template("register_form.html")
-        # return render_template("register_form.html", email=email,password=password )
-        # print(url_for('register_form', email = email, password = password))
-        # return redirect(url_for('register_form', email = email))
+
+    # check to see if submitted password matches user_rec.password in db
+    # if not, redirect to Login page.
+    # else, Successfully Logged in. Take to Welcome page.
     else:
         if user_rec.password != password:
             flash('your login is incorrect')
             return redirect('/login')
         else:
-            # TODO: add username and email to flask session to set alert
-            session['email'] = email
-            flash('You were successfully logged in %s' % session['email'])
-            return redirect("/")
+            session['login'] = mylogin
+            flash('You are successfully logged in %s' % session['login'])
+            return render_template("welcome.html")
 
 
 @app.route('/register')
 def register_form():
     """Registration page"""
-    # email = request.args.get('email')
-    # password = request.args.get('password')
-    # print(email)
-    # print(password)
     return render_template("register_form.html")
 
 
@@ -112,25 +101,71 @@ def register_process():
     state = request.form.get('state')
     zip_code = request.form.get('zip_code')
     country = request.form.get('country')
+    user_type = request.form.get('user_type')
+    twitter_handle = request.form.get('twitter_handle')
 
  
-    # if user does not exist, add to db
+    # add user to db
     user = User(first_name=first_name, last_name=last_name, email=email, 
         phone=phone, login=login)
-    user.address = Address(addresss_line1=add_line1, addresss_line2=add_line2, city=city, state=state, 
+    # set user address
+    user.address = Address(address_line1=add_line1, address_line2=add_line2, city=city, state=state, 
         zip_code=zip_code, country=country)
+    # add user login data to app_user
     app_user = AppUser(login=login, password=password)
     
-
+    # write new user / app_user to database
     db.session.add(app_user)
-
-    db.session.commit()
-    # user.address_id = address
-    
     db.session.add(user)
     db.session.commit()
+    # put user's email in flask session
     session['email'] = email
+
+
+    if user_type == 'artist':
+        return render_template("artist_info.html", user_id=user.user_id)
+    if user_type == 'patron':
+        return render_template("patron_info.html", user_id=user.user_id)
+    if user_type == 'fan':
+        return render_template("fan_info.html", user_id=user.user_id)
+
     flash('You were successfully registered %s.' % session['email'])
+    return redirect("/")
+
+
+@app.route('/artistInfo', methods=["POST"])
+def register_artist():
+    """Artist Registration page"""
+    bio = request.form.get('bio')
+    statement = request.form.get('statement')
+    user_id = request.form.get('user_id')
+    artist = Artist(user_id=user_id, bio=bio, statement=statement)
+    db.session.add(artist)
+
+    db.session.commit()
+    return redirect("/")
+
+@app.route('/patronInfo', methods=["POST"])
+def register_patron():
+    """Patron Registration page"""
+    patron_info = request.form.get('patron_info')
+    user_id = request.form.get('user_id')
+    patron = Patron(user_id=user_id, patron_info=patron_info)
+    db.session.add(patron)
+
+    db.session.commit()
+    return redirect("/")
+
+
+@app.route('/fanInfo', methods=["POST"])
+def register_fan():
+    """Fan Registration page"""
+    fan_info = request.form.get('fan_info')
+    user_id = request.form.get('user_id')
+    artist = Artist(user_id=user_id, bio=bio, statement=statement)
+    db.session.add(artist)
+
+    db.session.commit()
     return redirect("/")
 
 

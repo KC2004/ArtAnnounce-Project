@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Patron Info</h1>
+
+<form action="/patronInfo" method="POST">
+    <label>Patron Info:
+	    <div>
+	    <textarea name="patron_info"></textarea>
+	  	</div>
+    </label>
+    <input type="hidden" name="user_id" value='{{ user_id }}'>
+    <input type="submit" value="submit">
+</form>
+
+{% endblock %}

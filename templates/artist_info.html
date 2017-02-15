@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h1>Artist Info</h1>
+
+<form action="/artistInfo" method="POST">
+    <label>Bio:
+	    <div>
+	    <textarea name="bio"></textarea>
+	  	</div>
+    </label>
+    <label>Artist's Statement:
+        <div>
+	    <textarea name="statement"></textarea>
+	  	</div>
+    </label>
+    <input type="hidden" name="user_id" value='{{ user_id }}'>
+    <input type="submit" value="submit">
+</form>
+
+{% endblock %}
