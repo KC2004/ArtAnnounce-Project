@@ -1,18 +1,37 @@
 {% extends 'base.html' %}
 {% block content %}
-
-<h1>Artwork $$$$%%%%%$$$$$$</h1>
-<h2> show artwork here. thumbnail and title </h2>
+"
+<h3  align="center">Artwork</h3>
+<h3  align="center">by</h3>
+<h3 align="center"><i>Kushlani Jayasinha</i></h3>
+<h3></h3>
 
 <form action="/artists_artwork">
+
+  <table>
+    <td class="col-md-6">
+      <figure>
+        <img id="art-image" src="https://fasoimages-4cde.kxcdn.com/25287_2230200l+v=201611290358c201609181617error/.jpg" alt="art image" height="300" width="300">
+        <figcaption>November 2016<figcaption>
+      </figure>
+    <td>
+    <td class="col-md-6">
+      <figure>
+        <img id="art-image2" src={{ artwork_url }} alt={{ artwork_title }} height="300" width="300">
+        <figcaption>{{ artwork_title }}<figcaption>
+      </figure>
+    </td>
+  </table>
+
+
 <table class="table">
-        <td class="col-md-2">
-            <a href="/add_art" id="add_art">Add Artwork</a>
+        <td class="col-md-6">
+            <a href="/add_art_form" id="add_art_form">Add Artwork</a>
         </td>
-        <td class="col-md-2">
-            <a href="/share_page" id="share_art">Share Artwork</button>
+        <td class="col-md-6">
+            <a href="/share_art_form" id="share_art_form">Share Artwork</button>
         </td>
     </tr>
 </table>
-
+</form>
 {% endblock %}

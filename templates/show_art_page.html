@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>Artist Info</h1>
+<h1>Pick an Artist and Genre to show Artwork</h1>
 
-<form action="/artists_artwork">
+<form action="/artists_artwork" method="POST">
     Artist:
     <select name="artist">
       <option value="kushlani">Kushlani</option>

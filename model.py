@@ -180,9 +180,9 @@ class Artwork(db.Model):
     artist_id = db.Column(db.Integer, db.ForeignKey('artists.artist_id'))
     title = db.Column(db.String(50), nullable=True)
     year_created = db.Column(db.Integer, nullable=True)
-    medium_id = db.Column(db.Integer, db.ForeignKey('mediums.medium_id'))
-    substrate_id = db.Column(db.Integer, db.ForeignKey('substrates.substrate_id'))
-    genre_id = db.Column(db.Integer, db.ForeignKey('genres.genre_id'))
+    medium_id = db.Column(db.Integer, db.ForeignKey('mediums.medium_id'), nullable=True)
+    substrate_id = db.Column(db.Integer, db.ForeignKey('substrates.substrate_id'), nullable=True)
+    genre_id = db.Column(db.Integer, db.ForeignKey('genres.genre_id'), nullable=True)
     length = db.Column(db.Integer, nullable=True)
     height = db.Column(db.Integer, nullable=True)
     depth = db.Column(db.Integer, nullable=True)
@@ -197,6 +197,7 @@ class Artwork(db.Model):
     availability = db.relationship('Availability')
     patron = db.relationship('Patron', secondary='artwork_patron')
 
+    artist = db.relationship('Artist', backref=db.backref('artwork'))
 
     
     def __repr__(self):

@@ -3,8 +3,8 @@
 from jinja2 import StrictUndefined
 from flask_debugtoolbar import DebugToolbarExtension
 from flask import Flask, jsonify, render_template, redirect, request, flash, session, url_for
-from model import User, AppUser, Address, Artist, Patron, ArtFan, connect_to_db, db
-
+from model import User, AppUser, Address, Artist, Patron, ArtFan, Artwork, connect_to_db, db
+import ArtShare_twitter
 
 app = Flask(__name__)
 
@@ -37,11 +37,6 @@ def user_list():
 def user_profile():
     """Show user profile."""
 
-    # email = session['email']
-    # user = User.query.filter_by(email=email).first()
-    # user_ratings = Rating.query.filter_by(userid = user.user_id).all()
-    # user_movies = Movie.query.filter_by(user_ratings.movie_id).all()
-    # return render_template("user_profile.html", user=user, movies=user_ratings)
     return render_template("user_profile.html")
 
 
@@ -78,6 +73,8 @@ def login_form():
             flash('You are successfully logged in %s' % session['login'])
             return render_template("welcome.html")
 
+
+
 @app.route('/show_art_page')
 def show_art():
     """show art page"""
@@ -86,24 +83,79 @@ def show_art():
 
 
 @app.route('/artists_artwork')
-def show_artists_art():
-    """show art work of a particular Artist"""
+def pick_artists_art():
+    """Pick an Artist and genre to show work"""
 
     return render_template("artwork_page.html")
 
 
-@app.route('/share_art')
+@app.route('/artists_artwork', methods=["POST"])
+def show_artists_art():
+    """show artwork of a particular Artist"""
+
+    artist = request.form.get('artist')
+    genre = request.form.get('genre')
+
+    # if artist == 'Kushlani':
+    #     # check to see if user exists
+    artwork = Artwork.query.filter_by(artist_id=1).first()
+
+    return render_template("artwork_page.html", artwork_url=artwork.url, 
+        artwork_title=artwork.title)        
+
+
+@app.route('/share_art_form')
 def share_art():
-    """show art work of a particular Artist"""
+    """show share art page to pick the artist and set share parameters"""
 
     return render_template("share_art_page.html")
 
 
-@app.route('/add_art')
+@app.route('/share_art', methods=["POST"])
+def share_art_social_media():
+    """share art onsocial media"""
+    artist = request.form.get('artist')
+    genre = request.form.get('genre')
+    frequency = request.form.get('frequency')
+    interval = request.form.get('interval')
+    number = request.form.get('number')
+
+    artworks = Artwork.query.filter_by(artist_id=1).all()
+    
+    # for i in range(len(artworks)):
+    #     ArtShare_twitter.post_tweet(artworks[i].title, artworks[i].url)
+    ArtShare_twitter.post_tweet(artworks[0].title, artworks[0].url)
+
+    return render_template("welcome.html")
+
+
+@app.route('/add_art_form')
 def add_art():
-    """show art work of a particular Artist"""
+    """show page to add artwork"""
 
     return render_template("add_art_page.html")
+
+
+@app.route('/add_art', methods=["POST"])
+def add_art_db():
+    """add artwork to database"""
+    artist = request.form.get('artist')
+    title = request.form.get('title')
+    medium = request.form.get('medium')
+    substrate = request.form.get('substrate')
+    genre = request.form.get('genre')
+    year = request.form.get('year')
+    url = request.form.get('url')
+
+    # add artwork to db
+    artwork = Artwork(artist_id=1, title=title, year_created=year, url=url)
+        
+    # add artwork to database
+    db.session.add(artwork)
+    db.session.commit()
+
+    return render_template("welcome.html")
+
 
 
 @app.route('/register')
