@@ -190,14 +190,12 @@ class Artwork(db.Model):
     # jpg = db.Column(db.Blob, nullable=True)
     availability_id = db.Column(db.Integer, db.ForeignKey('availabilities.availability_id'))
 
-    artist = db.relationship('Artist')
+    artist = db.relationship('Artist', backref=db.backref('artwork'))
     medium = db.relationship('Medium')
     substrate = db.relationship('Substrate')
     genre = db.relationship('Genre')
     availability = db.relationship('Availability')
     patron = db.relationship('Patron', secondary='artwork_patron')
-
-    artist = db.relationship('Artist', backref=db.backref('artwork'))
 
     
     def __repr__(self):

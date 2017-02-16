@@ -9,18 +9,16 @@
 <form action="/artists_artwork">
 
   <table>
+
+    {% for art in artwork_list %} 
     <td class="col-md-6">
       <figure>
-        <img id="art-image" src="https://fasoimages-4cde.kxcdn.com/25287_2230200l+v=201611290358c201609181617error/.jpg" alt="art image" height="300" width="300">
-        <figcaption>November 2016<figcaption>
-      </figure>
-    <td>
-    <td class="col-md-6">
-      <figure>
-        <img id="art-image2" src={{ artwork_url }} alt={{ artwork_title }} height="300" width="300">
-        <figcaption>{{ artwork_title }}<figcaption>
+        <img id="art-image2" src={{ art.url }} alt={{ art.title }} height="300" width="300">
+        <figcaption>{{ art.title }}<figcaption>
       </figure>
     </td>
+    {% endfor %}
+    
   </table>
 
 

@@ -2,7 +2,7 @@
 {% block content %}
 
 <h1>Share Art on your favorite Social Media</h1>
-<h3>Pick the Social media site and Frequency </h3>
+<h3>Pick the Social media site and number of artwork </h3>
 <form action="/share_art" method="POST">
 	Artist:
     <select name="artist">
@@ -22,10 +22,10 @@
       <option value="twitter">Twitter</option>
       <option value="facebook">Facebook</option>
     </select><br><br>
-    <label>index
+<!--     <label>index
     <input type="text" name="index">
     </label><br><br>
-    Frequency:
+ --><!--     Frequency:
     <select name="frequency">
       <option value="daily">Daily</option>
       <option value="weekly">Weekly</option>
@@ -38,12 +38,13 @@
       <option value="10mins">10 mins</option>
       <option value="15mins">15 mins</option>
       <option value="20mins">20mins</option>
-    </select><br><br>
+    </select><br><br> -->
     <label>Number of Artwork:
     <input type="text" name="number">
     </label><br><br>
     
 
     <input type="submit" value="Share Art">
+    <a  href="/welcome">Cancel</a>
 </form>
 {% endblock %}

@@ -5,6 +5,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask import Flask, jsonify, render_template, redirect, request, flash, session, url_for
 from model import User, AppUser, Address, Artist, Patron, ArtFan, Artwork, connect_to_db, db
 import ArtShare_twitter
+import random
 
 app = Flask(__name__)
 
@@ -74,6 +75,13 @@ def login_form():
             return render_template("welcome.html")
 
 
+@app.route('/welcome')
+def welcome():
+    """Login page shows login form"""
+
+    return render_template("welcome.html")
+
+
 
 @app.route('/show_art_page')
 def show_art():
@@ -96,12 +104,11 @@ def show_artists_art():
     artist = request.form.get('artist')
     genre = request.form.get('genre')
 
-    # if artist == 'Kushlani':
+    # if artist == 'kushlani':
     #     # check to see if user exists
-    artwork = Artwork.query.filter_by(artist_id=1).first()
+    artwork_list = Artwork.query.filter_by(artist_id=1).all()
 
-    return render_template("artwork_page.html", artwork_url=artwork.url, 
-        artwork_title=artwork.title)        
+    return render_template("artwork_page.html", artwork_list=artwork_list) 
 
 
 @app.route('/share_art_form')
@@ -121,10 +128,9 @@ def share_art_social_media():
     number = request.form.get('number')
 
     artworks = Artwork.query.filter_by(artist_id=1).all()
-    
-    # for i in range(len(artworks)):
-    #     ArtShare_twitter.post_tweet(artworks[i].title, artworks[i].url)
-    ArtShare_twitter.post_tweet(artworks[0].title, artworks[0].url)
+    for i in range (0, number):
+        rand = random.randint(0,(len(artworks)-1))
+        ArtShare_twitter.post_tweet(artworks[rand].title, artworks[rand].url)
 
     return render_template("welcome.html")
 
