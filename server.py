@@ -128,9 +128,12 @@ def share_art_social_media():
     number = request.form.get('number')
 
     artworks = Artwork.query.filter_by(artist_id=1).all()
-    for i in range (0, number):
+    for i in range (0, int(number)):
         rand = random.randint(0,(len(artworks)-1))
-        ArtShare_twitter.post_tweet(artworks[rand].title, artworks[rand].url)
+        a = artworks[rand]
+        caption = "%s, %s on %s, %sx%s, %s" % (a.title, a.medium, a.substrate,
+            a.height, a.length, a.year_created)
+        ArtShare_twitter.post_tweet(caption, a.url)
 
     return render_template("welcome.html")
 
@@ -151,10 +154,15 @@ def add_art_db():
     substrate = request.form.get('substrate')
     genre = request.form.get('genre')
     year = request.form.get('year')
+    height = request.form.get('height')
+    length = request.form.get('width')
+    depth = request.form.get('depth')
     url = request.form.get('url')
 
     # add artwork to db
-    artwork = Artwork(artist_id=1, title=title, year_created=year, url=url)
+    artwork = Artwork(artist_id=1, title=title, medium=medium, 
+        substrate=substrate, genre=genre, height=height, length=length,
+        depth=depth, year_created=year, url=url)
         
     # add artwork to database
     db.session.add(artwork)

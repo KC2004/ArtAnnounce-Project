@@ -170,7 +170,6 @@ class ArtFan(db.Model):
 ##############################################################################
 # ArtWork and Sharing Tables
 ##############################################################################
-
 class Artwork(db.Model):
     """Artwork table"""
 
@@ -179,21 +178,18 @@ class Artwork(db.Model):
     artwork_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     artist_id = db.Column(db.Integer, db.ForeignKey('artists.artist_id'))
     title = db.Column(db.String(50), nullable=True)
-    year_created = db.Column(db.Integer, nullable=True)
-    medium_id = db.Column(db.Integer, db.ForeignKey('mediums.medium_id'), nullable=True)
-    substrate_id = db.Column(db.Integer, db.ForeignKey('substrates.substrate_id'), nullable=True)
-    genre_id = db.Column(db.Integer, db.ForeignKey('genres.genre_id'), nullable=True)
-    length = db.Column(db.Integer, nullable=True)
-    height = db.Column(db.Integer, nullable=True)
-    depth = db.Column(db.Integer, nullable=True)
+    year_created = db.Column(db.String(5), nullable=True)
+    medium = db.Column(db.String(20), nullable=True)
+    substrate = db.Column(db.String(20), nullable=True)
+    genre = db.Column(db.String(20), nullable=True)
+    length = db.Column(db.String(5), nullable=True)
+    height = db.Column(db.String(5), nullable=True)
+    depth = db.Column(db.String(5), nullable=True)
     url = db.Column(db.String(200), nullable=True)
     # jpg = db.Column(db.Blob, nullable=True)
     availability_id = db.Column(db.Integer, db.ForeignKey('availabilities.availability_id'))
 
     artist = db.relationship('Artist', backref=db.backref('artwork'))
-    medium = db.relationship('Medium')
-    substrate = db.relationship('Substrate')
-    genre = db.relationship('Genre')
     availability = db.relationship('Availability')
     patron = db.relationship('Patron', secondary='artwork_patron')
 
@@ -207,48 +203,6 @@ class Artwork(db.Model):
                                                 self.medium_id)
 
 
-class Medium(db.Model):
-    """Artwork Medium"""
-
-    __tablename__ = "mediums"
-    
-    medium_id = db.Column(db.Integer, primary_key=True)
-    medium = db.Column(db.String(20), nullable=False)
-    
-    def __repr__(self):
-        """Provide helpful representation when printed."""
-
-        return "<Medium id: %s\nMedium:%s\n>" % (self.medium_id,
-                                                self.medium)
-
-class Substrate(db.Model):
-    """Artwork Substrate"""
-
-    __tablename__ = "substrates"
-    
-    substrate_id = db.Column(db.Integer, primary_key=True)
-    substrate = db.Column(db.String(20), nullable=False)
-    
-    def __repr__(self):
-        """Provide helpful representation when printed."""
-
-        return "<Substrate id: %s\Substrate:%s\n>" % (self.substrate_id,
-                                                self.substrate)
-
-
-class Genre(db.Model):
-    """Artwork Substrate"""
-
-    __tablename__ = "genres"
-    
-    genre_id = db.Column(db.Integer, primary_key=True)
-    genre = db.Column(db.String(20), nullable=False)
-    
-    def __repr__(self):
-        """Provide helpful representation when printed."""
-
-        return "<Genre id: %s\Genre:%s\n>" % (self.genre_id,
-                                                self.genre)
 
 
 class Availability(db.Model):
