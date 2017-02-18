@@ -128,11 +128,17 @@ def share_art_social_media():
     number = request.form.get('number')
 
     artworks = Artwork.query.filter_by(artist_id=1).all()
+    curr_artist = Artist.query.filter_by(artist_id=1).first()
+
     for i in range (0, int(number)):
         rand = random.randint(0,(len(artworks)-1))
         a = artworks[rand]
-        caption = "%s, %s on %s, %sx%s, %s" % (a.title, a.medium, a.substrate,
-            a.height, a.length, a.year_created)
+        artist_firstname = curr_artist.user.first_name
+        artist_lastname =  curr_artist.user.last_name
+        artist_website = curr_artist.website
+        caption = "Artist: %s %s, %s, %s on %s, %sx%s, %s website: %s" % (artist_firstname, artist_lastname,
+         a.title, a.medium, a.substrate, a.height, a.length, a.year_created, artist_website)
+
         ArtShare_twitter.post_tweet(caption, a.url)
 
     return render_template("welcome.html")
@@ -155,7 +161,7 @@ def add_art_db():
     genre = request.form.get('genre')
     year = request.form.get('year')
     height = request.form.get('height')
-    length = request.form.get('width')
+    length = request.form.get('length')
     depth = request.form.get('depth')
     url = request.form.get('url')
 
@@ -163,13 +169,12 @@ def add_art_db():
     artwork = Artwork(artist_id=1, title=title, medium=medium, 
         substrate=substrate, genre=genre, height=height, length=length,
         depth=depth, year_created=year, url=url)
-        
-    # add artwork to database
+
+     # add artwork to database
     db.session.add(artwork)
     db.session.commit()
 
     return render_template("welcome.html")
-
 
 
 @app.route('/register')
@@ -231,8 +236,9 @@ def register_artist():
     """Artist Registration page"""
     bio = request.form.get('bio')
     statement = request.form.get('statement')
+    website = request.form.get('website')
     user_id = request.form.get('user_id')
-    artist = Artist(user_id=user_id, bio=bio, statement=statement)
+    artist = Artist(user_id=user_id, bio=bio, statement=statement, website=website)
     db.session.add(artist)
 
     db.session.commit()
@@ -255,8 +261,8 @@ def register_fan():
     """Fan Registration page"""
     fan_info = request.form.get('fan_info')
     user_id = request.form.get('user_id')
-    artist = Artist(user_id=user_id, bio=bio, statement=statement)
-    db.session.add(artist)
+    fan = ArtFan(user_id=user_id, fan_info=fan_info)
+    db.session.add(fan)
 
     db.session.commit()
     return redirect("/")

@@ -100,6 +100,7 @@ class Artist(db.Model):
     artist_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     bio = db.Column(db.String(2000), nullable=True)
     statement = db.Column(db.String(500), nullable=True)
+    website = db.Column(db.String(200), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     # jpg = db.Column(db.Blob, nullable=True)
 
@@ -136,7 +137,7 @@ class ArtFan(db.Model):
     __tablename__ = "fans"
 
     fan_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    patron_info = db.Column(db.String(250), nullable=True)
+    fan_info = db.Column(db.String(250), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
 
     user = db.relationship('User', backref=db.backref('fan'))
