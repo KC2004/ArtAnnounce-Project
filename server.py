@@ -133,11 +133,26 @@ def share_art_social_media():
     for i in range (0, int(number)):
         rand = random.randint(0,(len(artworks)-1))
         a = artworks[rand]
-        artist_firstname = curr_artist.user.first_name
-        artist_lastname =  curr_artist.user.last_name
-        artist_website = curr_artist.website
-        caption = "Artist: %s %s, %s, %s on %s, %sx%s, %s website: %s" % (artist_firstname, artist_lastname,
-         a.title, a.medium, a.substrate, a.height, a.length, a.year_created, artist_website)
+        a_firstname = curr_artist.user.first_name
+        a_lastname =  curr_artist.user.last_name
+        a_website = curr_artist.website
+        # include artist name?
+        caption = "#art"
+
+        if a.genre:
+            caption = ("#%s " % a.genre) + caption
+        if a_website:
+            caption = a_website + " " + caption
+        if (a.medium and a.substrate):
+            caption = ("%s on %s " % (a.medium, a.substrate)) + caption
+        if (a.height and a.length):
+            caption = ("%sx%s " % (a.height, a.length)) + caption
+        if (a.title):
+            caption = ("'%s' " % a.title) + caption
+        if (a_firstname and a_lastname):
+            caption = ("%s %s " % (a_firstname, a_lastname)) + caption
+
+        caption = caption[:144] # tweets can only be a max of 144 chars
 
         ArtShare_twitter.post_tweet(caption, a.url)
 
