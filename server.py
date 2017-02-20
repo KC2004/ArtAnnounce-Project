@@ -1,10 +1,10 @@
-"""Movie Ratings."""
+"""ArtAnnounce"""
 
 from jinja2 import StrictUndefined
 from flask_debugtoolbar import DebugToolbarExtension
 from flask import Flask, jsonify, render_template, redirect, request, flash, session, url_for
 from model import User, AppUser, Address, Artist, Patron, ArtFan, Artwork, connect_to_db, db
-import ArtShare_twitter
+import ArtAnnounceTwitter
 import random
 
 app = Flask(__name__)
@@ -154,7 +154,7 @@ def share_art_social_media():
 
         caption = caption[:144] # tweets can only be a max of 144 chars
 
-        ArtShare_twitter.post_tweet(caption, a.url)
+        ArtAnnounceTwitter.post_tweet(caption, a.url)
 
     return render_template("welcome.html")
 

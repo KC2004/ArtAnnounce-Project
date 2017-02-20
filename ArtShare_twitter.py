@@ -1,10 +1,9 @@
 import os  # To access our OS environment variables
-#import tweepy
 import twitter # Available on lab machines
 # Otherwise "pip install" into an active virtual env
 
 # Using Python os.environ to get environmental variables
-#
+
 # Note: you must run `source secrets.sh` before running 
 # this file to set required environmental variables.
 
@@ -21,9 +20,9 @@ print api.VerifyCredentials()
 
 # Send a tweet
 def post_tweet(tweet_str, tweet_url):
-	#status = api.PostUpdate("my second tweet in ArtShare")
+	#status = api.PostUpdate("my second tweet in ArtShare")  # writes text to twitter
 
-	status = api.PostMedia(tweet_str, tweet_url)
+	status = api.PostMedia(tweet_str, tweet_url)	# writes text and send image
 	print status.text
 
 
