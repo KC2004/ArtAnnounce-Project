@@ -61,8 +61,8 @@ class AppUser(db.Model):
     password = db.Column(db.String(20), nullable=False)
     # authorization_code_id = db.Column(db.Integer, db.ForeignKey('authorizations.auth_id'), nullable=True)
     
-    # user = db.relationship('User')
-    
+    user = db.relationship('User', backref=db.backref('app_user'))
+
     def __repr__(self):
         """Provide helpful representation when printed."""
 
@@ -346,7 +346,7 @@ def connect_to_db(app):
     """Connect the database to our Flask app."""
 
     # Configure to use our database.
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres:///artshare'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres:///artannounce'
     app.config['SQLALCHEMY_ECHO'] = False
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
