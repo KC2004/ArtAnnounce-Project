@@ -64,13 +64,15 @@ class FlaskTest(TestCase):
 		self.client = app.test_client()
 		app.config['TESTING'] = True
 
+		db.create_all()
 		self.example_data()
         
 
-	
-
 	def tear_down(self):
 		"""do at end of every test"""
+
+		db.session.close()
+		db.drop_all()
 
 	
 	
@@ -94,13 +96,12 @@ if __name__ == "__main__":
     connect_to_test_db(app)
     print "Connected to DB."
 
-    db.create_all()
+    
 
 
     unittest.main()
 
-    db.session.close()
-    db.drop_all()
+    
 
 
     
