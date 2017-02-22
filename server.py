@@ -225,10 +225,10 @@ def register_process():
     user.address = Address(address_line1=add_line1, address_line2=add_line2, city=city, state=state, 
         zip_code=zip_code, country=country)
     # add user login data to app_user
-    app_user = AppUser(login=login, password=password)
+    user.app_user = AppUser(login=login, password=password)
     
     # write new user / app_user to database
-    db.session.add(app_user)
+#    db.session.add(app_user)
     db.session.add(user)
     db.session.commit()
     # put user's email in flask session

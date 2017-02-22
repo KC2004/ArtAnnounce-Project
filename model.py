@@ -28,7 +28,7 @@ class User(db.Model):
     address_id = db.Column(db.Integer, db.ForeignKey('addresses.address_id'), nullable=True)
     login = db.Column(db.String(25), db.ForeignKey('app_users.login'), nullable=True)
 
-    app_user = db.relationship('AppUser')
+    app_user = db.relationship('AppUser', backref=db.backref('user'))
     address = db.relationship('Address', backref=db.backref('user'))
 
     def __repr__(self):
@@ -61,7 +61,6 @@ class AppUser(db.Model):
     password = db.Column(db.String(20), nullable=False)
     # authorization_code_id = db.Column(db.Integer, db.ForeignKey('authorizations.auth_id'), nullable=True)
     
-    user = db.relationship('User', backref=db.backref('app_user'))
 
     def __repr__(self):
         """Provide helpful representation when printed."""
@@ -352,6 +351,16 @@ def connect_to_db(app):
     db.app = app
     db.init_app(app)
 
+
+def connect_to_test_db(app):
+    """Connect the database to our Flask app."""
+
+    # Configure to use our database.
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres:///testdb'
+    app.config['SQLALCHEMY_ECHO'] = False
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    db.app = app
+    db.init_app(app)
 
 if __name__ == "__main__":
     # As a convenience, if we run this module interactively, it will leave
