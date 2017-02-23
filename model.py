@@ -52,23 +52,6 @@ class TwitterUser(db.Model):
 
 
 
-class AppUser(db.Model):
-    """App registrant's login info"""
-
-    __tablename__ = "app_users"
-    
-    login = db.Column(db.String(20), primary_key=True)
-    password = db.Column(db.String(20), nullable=False)
-    # authorization_code_id = db.Column(db.Integer, db.ForeignKey('authorizations.auth_id'), nullable=True)
-    
-
-    def __repr__(self):
-        """Provide helpful representation when printed."""
-
-        return "<Login info: classified>" 
-
-
-
 class Address(db.Model):
     """Addresses of users"""
 
@@ -91,6 +74,23 @@ class Address(db.Model):
                                                 self.state)
 
 
+class AppUser(db.Model):
+    """App registrant's login info"""
+
+    __tablename__ = "app_users"
+    
+    login = db.Column(db.String(20), primary_key=True)
+    password = db.Column(db.String(20), nullable=False)
+    # authorization_code_id = db.Column(db.Integer, db.ForeignKey('authorizations.auth_id'), nullable=True)
+    
+
+    def __repr__(self):
+        """Provide helpful representation when printed."""
+
+        return "<Login info: classified>" 
+
+
+
 class Artist(db.Model):
     """Artist's info"""
 
@@ -110,6 +110,7 @@ class Artist(db.Model):
         """Provide helpful representation when printed."""
 
         return "<Artist_id: %s>" % (self.artist_id)
+
 
 
 class Patron(db.Model):

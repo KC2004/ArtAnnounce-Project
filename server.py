@@ -4,8 +4,10 @@ from jinja2 import StrictUndefined
 from flask_debugtoolbar import DebugToolbarExtension
 from flask import Flask, jsonify, render_template, redirect, request, flash, session, url_for
 from model import User, AppUser, Address, Artist, Patron, ArtFan, Artwork, connect_to_db, db
-import ArtAnnounceTwitter
+from helper_functions import HelperFunctions
+#import ArtAnnounceTwitter
 import random
+
 
 app = Flask(__name__)
 
@@ -21,24 +23,8 @@ app.jinja_env.undefined = StrictUndefined
 @app.route('/')
 def index():
     """Homepage."""
-    # a = jsonify([1,3])
-    # return a
+
     return render_template("homepage.html")
-
-
-@app.route("/users")
-def user_list():
-    """Show list of users."""
-
-    users = User.query.all()
-    return render_template("user_list.html", users=users)
-
-
-@app.route("/user_profile")
-def user_profile():
-    """Show user profile."""
-
-    return render_template("user_profile.html")
 
 
 @app.route('/login')
@@ -72,7 +58,7 @@ def login_form():
         else:
             session['login'] = mylogin
             flash('You are successfully logged in %s' % session['login'])
-            return render_template("welcome.html")
+            return redirect("/welcome")
 
 
 @app.route('/welcome')
@@ -137,24 +123,15 @@ def share_art_social_media():
         a_lastname =  curr_artist.user.last_name
         a_website = curr_artist.website
         # include artist name?
-        caption = "#art"
 
-        if a.genre:
-            caption = ("#%s " % a.genre) + caption
-        if a_website:
-            caption = a_website + " " + caption
-        if (a.medium and a.substrate):
-            caption = ("%s on %s " % (a.medium, a.substrate)) + caption
-        if (a.height and a.length):
-            caption = ("%sx%s " % (a.height, a.length)) + caption
-        if (a.title):
-            caption = ("'%s' " % a.title) + caption
-        if (a_firstname and a_lastname):
-            caption = ("%s %s " % (a_firstname, a_lastname)) + caption
+        helper = HelperFunctions()
 
-        caption = caption[:144] # tweets can only be a max of 144 chars
+        caption = helper.create_caption(firstname=a_firstname, lastname=a_lastname,
+         title=a.title, height=a.height, length=a.length, medium=a.medium, substrate=a.substrate, website=a_website, genre=a.genre)
 
-        ArtAnnounceTwitter.post_tweet(caption, a.url)
+        caption = caption[:144]  # tweets can only be a max of 144 chars
+
+ #       ArtAnnounceTwitter.post_tweet(caption, a.url)
 
     return render_template("welcome.html")
 
@@ -228,7 +205,6 @@ def register_process():
     user.app_user = AppUser(login=login, password=password)
     
     # write new user / app_user to database
-#    db.session.add(app_user)
     db.session.add(user)
     db.session.commit()
     # put user's email in flask session
@@ -290,6 +266,23 @@ def logout():
     session.clear()
 
     return redirect("/")
+
+
+# @app.route("/users")
+# def user_list():
+#     """Show list of users."""
+
+#     users = User.query.all()
+#     return render_template("user_list.html", users=users)
+
+
+# @app.route("/user_profile")
+# def user_profile():
+#     """Show user profile."""
+
+#     return render_template("user_profile.html")
+
+
 
 
 if __name__ == "__main__":

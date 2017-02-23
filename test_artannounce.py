@@ -18,22 +18,23 @@ class FlaskTest(TestCase):
 		"""Create sample data"""
 		# populate users table
 		uk = User(first_name='Kushlani', last_name='Jayasinha', email='kushi@att.net',
-				address_id=1, login='kushij')
-		uk.appuser = AppUser(login='kushij', password='1234')
+				address_id=1)
+		uk.app_user = AppUser(login='kushij', password='1234')
+		
 		uk.address = Address(address_line1='myhome')
 		uc = User(first_name='Chris', last_name='Lane', email='chris@lane-jayasinha.com',
-				address_id=2, login='chrisl')
-		uc.appuser = AppUser(login='chrisl', password='1234')
+				address_id=2)
+		uc.app_user = AppUser(login='chrisl', password='1234')
 		uc.address = Address(address_line1='myhome')
 
 		uv = User(first_name='Vidharshi', last_name='Dharmasens', email='V@gmail.com',
-				address_id=3, login='v')
-		uv.appuser = AppUser(login='v', password='1234')
+				address_id=3)
+		uv.app_user = AppUser(login='v', password='1234')
 		uv.address = Address(address_line1='myhome')
 
 		ua = User(first_name='Alex', last_name='Hall', email='alex@gmail.com',
-				address_id=4, login='alexh')
-		ua.appuser = AppUser(login='alexh', password='1234')
+				address_id=4)
+		ua.app_user = AppUser(login='alexh', password='1234')
 		ua.address = Address(address_line1='myhome')
 
 
@@ -53,7 +54,8 @@ class FlaskTest(TestCase):
 		aw2 = Artwork(title='Autumn', year_created='2015', medium='oil', substrate='canvas',
 			genre='abstracts',length='8"', height='8"', depth='1.5"', url='https://fasoimages-4cde.kxcdn.com/25287_1322110l+v=201609181617c201609181617error/autumn.jpg')
 
-		db.session.add_all([uk, uk.appuser, uk.address, uc, uc.appuser, uc.address, ua, ua.appuser, ua.address, uv, uv.appuser, uv.address, a1, p1, f1, aw1, aw2])
+		#db.session.add_all([uk, uk.app_user, uk.address, uc, uc.app_user, uc.address, ua, ua.app_user, ua.address, uv, uv.app_user, uv.address, a1, p1, f1, aw1, aw2])
+		db.session.add_all([uk, uc, ua, uv, a1, p1, f1, aw1, aw2])
 		db.session.commit()
 
 
@@ -68,11 +70,13 @@ class FlaskTest(TestCase):
 		self.example_data()
         
 
-	def tear_down(self):
+	def tearDown(self):
 		"""do at end of every test"""
-
-		db.session.close()
+		
 		db.drop_all()
+		db.session.close()
+		
+		#db.drop_all()
 
 	
 	
@@ -84,7 +88,28 @@ class FlaskTest(TestCase):
 		self.assertIn('login', result.data)
 		self.assertIn('registered', result.data)
 	
+	def test_login_get(self):
+		"""Test if gets to login page"""
+
+		result = self.client.get("/login")
+		self.assertIn('login', result.data)	# if working code should be 200
+
 	
+	def test_login_correct(self):
+		"""Test if login correct if so shows Welcome page"""
+
+		result = self.client.post("/login", data={'login':'kushij', 'pwd':'1234'},
+			follow_redirects=True)
+		self.assertIn('Welcome to ArtAnnounce', result.data)	
+
+
+	def test_login_wrong(self):
+		"""Test if it goes to registration page user doesn't exist"""
+
+		result = self.client.post("/login", data={'login':'wrong_user', 'pwd':'1234'},
+			follow_redirects=True)
+		self.assertIn('Zip code:', result.data)	
+
 
 if __name__ == "__main__":
     # As a convenience, if we run this module interactively, it will leave
