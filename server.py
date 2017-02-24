@@ -194,32 +194,38 @@ def register_process():
     user_type = request.form.get('user_type')
     twitter_handle = request.form.get('twitter_handle')
 
- 
-    # add user to db
-    user = User(first_name=first_name, last_name=last_name, email=email, 
-        phone=phone, login=login)
-    # set user address
-    user.address = Address(address_line1=add_line1, address_line2=add_line2, city=city, state=state, 
-        zip_code=zip_code, country=country)
-    # add user login data to app_user
-    user.app_user = AppUser(login=login, password=password)
-    
-    # write new user / app_user to database
-    db.session.add(user)
-    db.session.commit()
-    # put user's email in flask session
-    session['email'] = email
+    # check to see if login exists in name exists in db
+    login_user = AppUser.query.filter_by(login=login).first()
+
+    if not login_user: 
+        # add user to db
+        user = User(first_name=first_name, last_name=last_name, email=email, 
+            phone=phone, login=login)
+        # set user address
+        user.address = Address(address_line1=add_line1, address_line2=add_line2, city=city, state=state, 
+            zip_code=zip_code, country=country)
+        # add user login data to app_user
+        user.app_user = AppUser(login=login, password=password)
+        
+        # write new user / app_user to database
+        db.session.add(user)
+        db.session.commit()
+        # put user's email in flask session
+        session['email'] = email
 
 
-    if user_type == 'artist':
-        return render_template("artist_info.html", user_id=user.user_id)
-    if user_type == 'patron':
-        return render_template("patron_info.html", user_id=user.user_id)
-    if user_type == 'fan':
-        return render_template("fan_info.html", user_id=user.user_id)
+        if user_type == 'artist':
+            return render_template("artist_info.html", user_id=user.user_id)
+        if user_type == 'patron':
+            return render_template("patron_info.html", user_id=user.user_id)
+        if user_type == 'fan':
+            return render_template("fan_info.html", user_id=user.user_id)
 
-    flash('You were successfully registered %s.' % session['email'])
-    return redirect("/")
+        flash('You were successfully registered %s.' % session['email'])
+        return redirect("/")
+    else:   # login exists in database.
+        flash('login: %s already exists please pick another.' % login)
+        return redirect('/register')
 
 
 @app.route('/artistInfo', methods=["POST"])
@@ -234,6 +240,8 @@ def register_artist():
 
     db.session.commit()
     return redirect("/")
+
+
 
 @app.route('/patronInfo', methods=["POST"])
 def register_patron():

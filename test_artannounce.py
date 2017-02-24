@@ -63,22 +63,27 @@ class FlaskTest(TestCase):
 	def setUp(self):
 		"""Stuff to do before every test"""
 
+		#import pdb; pdb.set_trace()
+
+		print "set up is done"
 		self.client = app.test_client()
 		app.config['TESTING'] = True
 
 		db.create_all()
 		self.example_data()
+		
         
 
 	def tearDown(self):
 		"""do at end of every test"""
-		
-		db.drop_all()
+
+		#import pdb; pdb.set_trace()
+		print "tear down "
+		#db.delete_all()
 		db.session.close()
 		
-		#db.drop_all()
-
-	
+		db.drop_all()
+		
 	
 	def test_homepage_route(self):
 		"""Test homepage"""
@@ -96,11 +101,21 @@ class FlaskTest(TestCase):
 
 	
 	def test_login_correct(self):
-		"""Test if login correct if so shows Welcome page"""
+		"""Test if login correct shows Welcome page"""
 
 		result = self.client.post("/login", data={'login':'kushij', 'pwd':'1234'},
 			follow_redirects=True)
-		self.assertIn('Welcome to ArtAnnounce', result.data)	
+
+		user_rec = AppUser.query.filter_by(login='kushij').first()
+
+		#import pdb; pdb.set_trace()
+		if user_rec:
+			print "Kushij exists"
+		self.assertEqual(user_rec.login, 'kushij')
+
+		#******************************************************
+
+		#self.assertIn('Welcome to ArtAnnounce', result.data)	
 
 
 	def test_login_wrong(self):
@@ -108,23 +123,86 @@ class FlaskTest(TestCase):
 
 		result = self.client.post("/login", data={'login':'wrong_user', 'pwd':'1234'},
 			follow_redirects=True)
-		self.assertIn('Zip code:', result.data)	
+		self.assertIn('Zip code:', result.data)	# should get to registration page
+
+
+	def test_registration_get(self):
+		"""Test if in registrstion page"""
+
+		result = self.client.get("/register")
+		self.assertIn('Zip code:', result.data)	# should get to registration page
+
+
+	def test_registration_incorrect(self):
+		"""Test if redirects to register if using invalid login name"""
+
+		result = self.client.post("/register", data={'login':'kushij', 'pwd':'1234',
+			'first_name':'valid_firstname','last_name':'valid_lastname'},
+			follow_redirects=True)
+		self.assertIn('Zip code', result.data)	
+
+
+	def test_registration_correct(self):
+		"""Test if redirects to login if using invalid login name"""
+
+		result = self.client.post("/register", data={'login':'valid_login', 'pwd':'1234',
+			'first_name':'valid_firstname','last_name':'valid_lastname'},
+			follow_redirects=True)
+
+		self.assertIn('If you have already registered, please login', result.data)	
+
+
+
+	
+	def test_reg_artist(self):	
+		""" Test if user type is an artist, 
+			routes to collecting artist info page,
+			if users and artist tables get updated"""
+		
+		# create a user who is an artist
+		result = self.client.post("/register", data={'login':'anji', 'pwd':'1234',
+			'first_name':'Anjana','last_name':'Jayasinha', 'user_type':'artist'},
+			follow_redirects=True)
+		
+		# check if it goes to Artist info page
+		self.assertIn('Artist Info', result.data)
+		
+		# check if user put in users database
+		user_rec = User.query.filter_by(login='anji').first()
+
+		# check if artist is put in artists database. use user_id from user
+		result_artist = self.client.post("/artistInfo", data={'user_id':user_rec.user_id, 'bio':'iam an artist', 
+			'statement':'this is my statement', 'website':'mywebsite' }, 
+			follow_redirects=True)
+		artist_rec = Artist.query.filter_by(website='mywebsite').first()
+
+		self.assertEqual(artist_rec.website, 'mywebsite')
+
+
+
+	def test_reg_patron(self):	
+		"""Test if user type is patron, check it routes to collecting patron info page"""
+		result = self.client.post("/register", data={'login':'valid_login', 'pwd':'1234',
+			'first_name':'valid_fn','last_name':'valid_ln', 'user_type':'patron'},
+			follow_redirects=True)
+		self.assertIn('Patron Info', result.data)
+
+
+
+	def test_reg_fan(self):	
+		"""Test if user type is fan, check it routes to collecting fan info page"""
+		result = self.client.post("/register", data={'login':'valid_login', 'pwd':'1234',
+			'first_name':'valid_fn','last_name':'valid_ln', 'user_type':'fan'},
+			follow_redirects=True)
+		self.assertIn('Fan Info', result.data)
+
 
 
 if __name__ == "__main__":
-    # As a convenience, if we run this module interactively, it will leave
-    # you in a state of being able to work with the database directly.
 
-    # So that we can use Flask-SQLAlchemy, we'll make a Flask app.
- #   from FlaskTest import example_data
-
-    connect_to_test_db(app)
-    print "Connected to DB."
-
-    
-
-
-    unittest.main()
+	connect_to_test_db(app)
+	print "Connected to DB."
+	unittest.main()
 
     
 
