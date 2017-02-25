@@ -3,7 +3,7 @@
 from jinja2 import StrictUndefined
 from flask_debugtoolbar import DebugToolbarExtension
 from flask import Flask, jsonify, render_template, redirect, request, flash, session, url_for
-from model import User, AppUser, Address, Artist, Patron, ArtFan, Artwork, connect_to_db, db
+from model import User, AppUser, Address, Artist, Patron, Fan, Artwork, connect_to_db, db
 from helper_functions import HelperFunctions
 #import ArtAnnounceTwitter
 import random
@@ -260,7 +260,7 @@ def register_fan():
     """Fan Registration page"""
     fan_info = request.form.get('fan_info')
     user_id = request.form.get('user_id')
-    fan = ArtFan(user_id=user_id, fan_info=fan_info)
+    fan = Fan(user_id=user_id, fan_info=fan_info)
     db.session.add(fan)
 
     db.session.commit()

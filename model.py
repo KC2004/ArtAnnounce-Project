@@ -131,7 +131,7 @@ class Patron(db.Model):
         return "<Patron id: %s\n>" % (self.patron_id)
 
 
-class ArtFan(db.Model):
+class Fan(db.Model):
     """Art fan info"""
 
     __tablename__ = "fans"

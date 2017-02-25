@@ -9,13 +9,13 @@
 <form action="/artists_artwork">
 
   <table>
+width="300">
+        <figcaption>{{ art.title }}<figcaption>
 
     {% for art in artwork_list %} 
     <td class="col-md-6">
       <figure>
-        <img id="art-image2" src={{ art.url }} alt={{ art.title }} height="300" width="300">
-        <figcaption>{{ art.title }}<figcaption>
-      </figure>
+        <img id="art-image2" src={{ art.url }} alt={{ art.title }} height="300"       </figure>
     </td>
     {% endfor %}
     

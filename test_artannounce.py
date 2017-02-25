@@ -1,7 +1,7 @@
 import unittest
 from unittest import TestCase
 from server import app
-from model import User, AppUser, Address, Artist, Patron, ArtFan, Artwork, connect_to_test_db, db
+from model import User, AppUser, Address, Artist, Patron, Fan, Artwork, connect_to_test_db, db
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -10,7 +10,7 @@ from flask_sqlalchemy import SQLAlchemy
 # object, where we do most of our interactions (like committing, etc.)
 # db = SQLAlchemy()
 
-class FlaskTest(TestCase):
+class TestArtAnnounce(TestCase):
 	""" test harness to test ArtAnnounce"""
 
 	
@@ -46,7 +46,7 @@ class FlaskTest(TestCase):
 		p1 = Patron(patron_info='I love Chris....')
 
 		# populate fans table
-		f1 = ArtFan(fan_info='I love Alex.')
+		f1 = Fan(fan_info='I love Alex.')
 
 		# populate artworks table
 		aw1 = Artwork(title='Mendocino', year_created='2015', medium='oil', substrate='canvas',
@@ -79,9 +79,7 @@ class FlaskTest(TestCase):
 
 		#import pdb; pdb.set_trace()
 		print "tear down "
-		#db.delete_all()
 		db.session.close()
-		
 		db.drop_all()
 		
 	
@@ -92,6 +90,7 @@ class FlaskTest(TestCase):
 		self.assertEqual(result.status_code, 200)	# if working code should be 200
 		self.assertIn('login', result.data)
 		self.assertIn('registered', result.data)
+
 	
 	def test_login_get(self):
 		"""Test if gets to login page"""
@@ -106,16 +105,13 @@ class FlaskTest(TestCase):
 		result = self.client.post("/login", data={'login':'kushij', 'pwd':'1234'},
 			follow_redirects=True)
 
-		user_rec = AppUser.query.filter_by(login='kushij').first()
-
-		#import pdb; pdb.set_trace()
-		if user_rec:
-			print "Kushij exists"
+		try:
+			user_rec = AppUser.query.filter_by(login='kushij').first()
+		except:
+			print "db query for user failed."
+		
 		self.assertEqual(user_rec.login, 'kushij')
-
-		#******************************************************
-
-		#self.assertIn('Welcome to ArtAnnounce', result.data)	
+		self.assertIn('Welcome to ArtAnnounce', result.data)	
 
 
 	def test_login_wrong(self):
@@ -152,51 +148,70 @@ class FlaskTest(TestCase):
 		self.assertIn('If you have already registered, please login', result.data)	
 
 
+	def helper_user_type_db(self, user_ID, user_type, db_field, db_data):
+		"""
+			Test if users and user_type (eg. artist) 
+			tables get updated
+		"""
+		
+		route_string = "/%sInfo" % user_type
+		# check if artist is put in artists database. use user_id from user
+		result_use = self.client.post(route_string, data={'user_id':user_ID, 
+			db_field:db_data}, follow_redirects=True)
+		
+		User_type_class = globals()[user_type.title()]
+		#import pdb; pdb.set_trace()
+		user_rec = User_type_class.query.filter_by(user_id=user_ID).first()
+					
+		self.assertEqual(getattr(user_rec, db_field), db_data)
+
 
 	
-	def test_reg_artist(self):	
+	def helper_user_type_all(self, usertype, str_in_user_type_page, db_field, db_data):	
+		""" Test for user type: routes to specific
+			user info page, if users and user_type (eg. artist) 
+			tables get updated
+		"""
+		
+		# create a user who is an user_type
+		result = self.client.post("/register", data={'login':'anji', 'pwd':'1234',
+			'first_name':'Anjana','last_name':'Jayasinha', 'user_type':usertype},
+			follow_redirects=True)
+		
+		# check if it goes to user_type info page
+		self.assertIn(str_in_user_type_page, result.data)
+		
+		# check if user put in users database
+		user_type_rec = User.query.filter_by(login='anji').first()
+		# check if user_type table gets updated
+		self.helper_user_type_db(user_type_rec.user_id, usertype, db_field, db_data)
+
+
+
+	def test_register_artist(self):	
 		""" Test if user type is an artist, 
 			routes to collecting artist info page,
 			if users and artist tables get updated"""
 		
-		# create a user who is an artist
-		result = self.client.post("/register", data={'login':'anji', 'pwd':'1234',
-			'first_name':'Anjana','last_name':'Jayasinha', 'user_type':'artist'},
-			follow_redirects=True)
+		self.helper_user_type_all('artist', 'Artist Info', 'website', 'mywebsite')
+
+
+	def test_register_patron(self):	
+		""" Test if user type is an patron, 
+			routes to collecting patron info page,
+			if users and patron tables get updated"""
 		
-		# check if it goes to Artist info page
-		self.assertIn('Artist Info', result.data)
+		self.helper_user_type_all('patron', 'Patron Info', 'patron_info', 'I am a patron')
+
+
+	def test_register_fan(self):	
+		""" Test if user type is an fan, 
+			routes to collecting fan info page,
+			if users and fan tables get updated"""
 		
-		# check if user put in users database
-		user_rec = User.query.filter_by(login='anji').first()
+		self.helper_user_type_all('fan', 'Fan Info', 'fan_info', 'I am a fan')
 
-		# check if artist is put in artists database. use user_id from user
-		result_artist = self.client.post("/artistInfo", data={'user_id':user_rec.user_id, 'bio':'iam an artist', 
-			'statement':'this is my statement', 'website':'mywebsite' }, 
-			follow_redirects=True)
-		artist_rec = Artist.query.filter_by(website='mywebsite').first()
-
-		self.assertEqual(artist_rec.website, 'mywebsite')
-
-
-
-	def test_reg_patron(self):	
-		"""Test if user type is patron, check it routes to collecting patron info page"""
-		result = self.client.post("/register", data={'login':'valid_login', 'pwd':'1234',
-			'first_name':'valid_fn','last_name':'valid_ln', 'user_type':'patron'},
-			follow_redirects=True)
-		self.assertIn('Patron Info', result.data)
-
-
-
-	def test_reg_fan(self):	
-		"""Test if user type is fan, check it routes to collecting fan info page"""
-		result = self.client.post("/register", data={'login':'valid_login', 'pwd':'1234',
-			'first_name':'valid_fn','last_name':'valid_ln', 'user_type':'fan'},
-			follow_redirects=True)
-		self.assertIn('Fan Info', result.data)
-
-
+	
 
 if __name__ == "__main__":
 
