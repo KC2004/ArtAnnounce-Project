@@ -1,7 +1,7 @@
 import unittest
 from unittest import TestCase
 from server import app
-from model import User, AppUser, Address, Artist, Patron, Fan, Artwork, connect_to_test_db, db
+from model import User, AppUser, Address, Artist, Patron, Fan, Artwork, db
 from flask_sqlalchemy import SQLAlchemy
 
 
@@ -205,8 +205,21 @@ class TestArtAnnounce(TestCase):
 			if users and fan tables get updated"""
 		
 		self.helper_user_type_all('fan', 'Fan Info', 'fan_info', 'I am a fan')
+##############################################################################
 
-	
+### Helper Functions:
+
+##############################################################################
+def connect_to_test_db(app):
+	"""Connect the database to our Flask app."""
+
+	# Configure to use our database.
+	app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres:///testdb'
+	app.config['SQLALCHEMY_ECHO'] = False
+	app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+	db.app = app
+	db.init_app(app)
+
 
 if __name__ == "__main__":
 
