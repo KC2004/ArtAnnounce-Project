@@ -5,11 +5,6 @@ from model import User, AppUser, Address, Artist, Patron, Fan, Artwork, connect_
 from flask_sqlalchemy import SQLAlchemy
 
 
-# Here's where we create the idea of our database. We're getting this through
-# the Flask-SQLAlchemy library. On db, we can find the `session`
-# object, where we do most of our interactions (like committing, etc.)
-# db = SQLAlchemy()
-
 class TestArtAnnounce(TestCase):
 	""" test harness to test ArtAnnounce"""
 
