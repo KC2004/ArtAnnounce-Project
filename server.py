@@ -5,7 +5,7 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask import Flask, jsonify, render_template, redirect, request, flash, session, url_for
 from model import User, AppUser, Address, Artist, Patron, Fan, Artwork, connect_to_db, db
 from helper_functions import HelperFunctions
-#import ArtAnnounceTwitter
+import ArtAnnounceTwitter
 import random
 
 
@@ -107,22 +107,26 @@ def share_art():
 @app.route('/share_art', methods=["POST"])
 def share_art_social_media():
     """share art onsocial media"""
-    artist = request.form.get('artist')
-    genre = request.form.get('genre')
-    frequency = request.form.get('frequency')
-    interval = request.form.get('interval')
-    number = request.form.get('number')
 
-    artworks = Artwork.query.filter_by(artist_id=1).all()
-    curr_artist = Artist.query.filter_by(artist_id=1).first()
+    art_list = request.form.getlist('artwork')
 
-    for i in range (0, int(number)):
-        rand = random.randint(0,(len(artworks)-1))
-        a = artworks[rand]
+    print '###########################################'
+    print art_list
+    print type(art_list)
+    # # artist = request.form.get('artist')
+    # # genre = request.form.get('genre')
+    # # frequency = request.form.get('frequency')
+    # # interval = request.form.get('interval')
+    # # number = request.form.get('number')
+    # art_id = request.form.get("artwork")
+    # #artworks = Artwork.query.filter_by(artist_id=1).all()
+    for a_num in range(len(art_list))
+        a = Artwork.query.filter_by(artwork_id=int(art_list[a_num])).first()
+        curr_artist = Artist.query.filter_by(artist_id=1).first()
+
         a_firstname = curr_artist.user.first_name
         a_lastname =  curr_artist.user.last_name
         a_website = curr_artist.website
-        # include artist name?
 
         helper = HelperFunctions()
 
@@ -131,9 +135,30 @@ def share_art_social_media():
 
         caption = caption[:144]  # tweets can only be a max of 144 chars
 
- #       ArtAnnounceTwitter.post_tweet(caption, a.url)
+        ArtAnnounceTwitter.post_tweet(caption, a.url)
 
     return render_template("welcome.html")
+
+
+
+    # # for i in range (0, int(number)):
+    # #     rand = random.randint(0,(len(artworks)-1))
+    # #     a = artworks[rand]
+    # #     a_firstname = curr_artist.user.first_name
+    # #     a_lastname =  curr_artist.user.last_name
+    # #     a_website = curr_artist.website
+    # #     # include artist name?
+
+    # #     helper = HelperFunctions()
+
+    # #     caption = helper.create_caption(firstname=a_firstname, lastname=a_lastname,
+    # #      title=a.title, height=a.height, length=a.length, medium=a.medium, substrate=a.substrate, website=a_website, genre=a.genre)
+
+    # #     caption = caption[:144]  # tweets can only be a max of 144 chars
+
+    # #     ArtAnnounceTwitter.post_tweet(caption, a.url)
+
+    #return render_template("welcome.html")
 
 
 @app.route('/add_art_form')

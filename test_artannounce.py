@@ -1,5 +1,9 @@
 import unittest
 from unittest import TestCase
+
+
+
+awq
 from server import app
 from model import User, AppUser, Address, Artist, Patron, Fan, Artwork, db
 from flask_sqlalchemy import SQLAlchemy

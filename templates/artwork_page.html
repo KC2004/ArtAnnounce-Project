@@ -1,35 +1,43 @@
 {% extends 'base.html' %}
 {% block content %}
 "
-<h3  align="center">Artwork</h3>
-<h3  align="center">by</h3>
+<h5  align="center">Artwork</h5>
+<h5  align="center">by</h5>
 <h3 align="center"><i>Kushlani Jayasinha</i></h3>
 <h3></h3>
 
-<form action="/artists_artwork">
+<form action='/share_art' method="POST">
 
-  <table>
-width="300">
-        <figcaption>{{ art.title }}<figcaption>
+  <table >
+  <div class='row' >
+    {% for art in artwork_list %}
 
-    {% for art in artwork_list %} 
-    <td class="col-md-6">
-      <figure>
-        <img id="art-image2" src={{ art.url }} alt={{ art.title }} height="300"       </figure>
-    </td>
+        <div class='col-xs-2'>
+          <input class='select_art' type=checkbox name="artwork" value={{ art.artwork_id }}>
+          <figure>
+           <img src={{ art.url }} alt={{ art.title }} height="100"width="100">
+           <figcaption>{{ art.title }}<figcaption>
+          </figure>
+        </div>
+  
     {% endfor %}
+  </div>
     
   </table>
 
 
-<table class="table">
-        <td class="col-md-6">
+<!-- <table class="table">
+        <td class="col-xs-3">
             <a href="/add_art_form" id="add_art_form">Add Artwork</a>
         </td>
-        <td class="col-md-6">
+        <td class="col-xs-3">
             <a href="/share_art_form" id="share_art_form">Share Artwork</button>
         </td>
     </tr>
-</table>
+</table> -->
+
+  <input type="submit" value="Share Art">
+  <a id='cancel' href="/welcome">Cancel</a>
 </form>
 {% endblock %}
+
