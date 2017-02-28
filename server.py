@@ -113,6 +113,7 @@ def share_art_social_media():
     print '###########################################'
     print art_list
     print type(art_list)
+    print len(art_list)
     # # artist = request.form.get('artist')
     # # genre = request.form.get('genre')
     # # frequency = request.form.get('frequency')
@@ -120,22 +121,22 @@ def share_art_social_media():
     # # number = request.form.get('number')
     # art_id = request.form.get("artwork")
     # #artworks = Artwork.query.filter_by(artist_id=1).all()
-    for a_num in range(len(art_list))
-        a = Artwork.query.filter_by(artwork_id=int(art_list[a_num])).first()
-        curr_artist = Artist.query.filter_by(artist_id=1).first()
+    # for a_num in range(len(art_list))
+    #     a = Artwork.query.filter_by(artwork_id=int(art_list[a_num])).first()
+    #     curr_artist = Artist.query.filter_by(artist_id=1).first()
 
-        a_firstname = curr_artist.user.first_name
-        a_lastname =  curr_artist.user.last_name
-        a_website = curr_artist.website
+    #     a_firstname = curr_artist.user.first_name
+    #     a_lastname =  curr_artist.user.last_name
+    #     a_website = curr_artist.website
 
-        helper = HelperFunctions()
+    #     helper = HelperFunctions()
 
-        caption = helper.create_caption(firstname=a_firstname, lastname=a_lastname,
-         title=a.title, height=a.height, length=a.length, medium=a.medium, substrate=a.substrate, website=a_website, genre=a.genre)
+    #     caption = helper.create_caption(firstname=a_firstname, lastname=a_lastname,
+    #      title=a.title, height=a.height, length=a.length, medium=a.medium, substrate=a.substrate, website=a_website, genre=a.genre)
 
-        caption = caption[:144]  # tweets can only be a max of 144 chars
+    #     caption = caption[:144]  # tweets can only be a max of 144 chars
 
-        ArtAnnounceTwitter.post_tweet(caption, a.url)
+    #     ArtAnnounceTwitter.post_tweet(caption, a.url)
 
     return render_template("welcome.html")
 
