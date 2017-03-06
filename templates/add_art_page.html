@@ -6,10 +6,12 @@
 <form action="/add_art" method="POST">
     Artist:
     <select name="artist">
-      <option value="kushlani">Kushlani</option>
-      <option value="artist2">Artist2</option>
-      <option value="artist3">Artist3</option>
-    </select><br>
+      {% for artist in all_artists %}
+        <option value={{ artist.artist_id }}>{{ artist.user.first_name }}  {{ artist.user.last_name }}</option>
+      {% endfor %}
+    </select>
+    <a id = "register" href="/register">Register New Artist</a><br>
+    <br>
     <label>Title:
     <input type="text" name="title">
     </label><br>
@@ -19,23 +21,43 @@
       <option value="acrylic">Acrylic</option>
       <option value="watercolor">Watercolor</option>
       <option value="mixed_media">Mixed media</option>
-      <option value="pastel">Oil</option>
+      <option value="soft pastel">Soft Pastel</option>
+      <option value="oil pastel">Oil Pastel</option>
       <option value="charcoal">Acrylic</option>
-      <option value="graphite">Watercolor</option>
-      <option value="Gouache">Mixed media</option>
+      <option value="graphite">Graphite</option>
+      <option value="gouache">Gouache</option>
+      <option value="pencil">Pencil</option>
+      <option value="markers">Markers</option>
+      <option value="tile">Tile</option>
+      <option value="fabric">Fabric</option>
+      <option value="clay">Clay</option>
+      <option value="metal">Metal</option>
+      <option value="bronze">Bronze</option>
+
     </select><br>
     Substrate:
     <select name="substrate">
       <option value="canvas">Canvas</option>
       <option value="paper">Paper</option>
       <option value="panel">Panel</option>
+      <option value="wood">Wood</option>
+      <option value="metal">Metal</option>
     </select><br>
     Genre:
     <select name="genre">
       <option value="abstracts">Abstracts</option>
       <option value="portraits">Portraits</option>
       <option value="landscapes">Landscapes</option>
+      <option value="stillives">Still Lives</option>
+      <option value="drawings">Drawings</option>
+      <option value="impressionist">impressionist</option>
+      <option value="expressionist">Expressionist</option>
+      <option value="jewellery">Jewellery</option>
+      <option value="sculpture">Sculpture</option>
+      <option value="pottery">Pottery</option>
+      <option value="weaving">Weaving</option>
     </select><br>
+
     <label>Height:
     <input type="text" name="height">
     </label><br>

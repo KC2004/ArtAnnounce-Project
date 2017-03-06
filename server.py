@@ -2,11 +2,11 @@
 
 from jinja2 import StrictUndefined
 from flask_debugtoolbar import DebugToolbarExtension
-from flask import Flask, jsonify, render_template, redirect, request, flash, session, url_for
+from flask import Flask, jsonify, render_template, redirect, request, flash, session, url_for, json
 from model import User, AppUser, Address, Artist, Patron, Fan, Artwork, connect_to_db, db
 from helper_functions import HelperFunctions
 import ArtAnnounceTwitter
-import random
+import ArtAnnounceFacebook
 
 
 app = Flask(__name__)
@@ -72,8 +72,11 @@ def welcome():
 @app.route('/show_art_page')
 def show_art():
     """show art page"""
+    all_artists = Artist.query.all()
+    genres = db.session.query(Artwork.genre).distinct()
+    genres = [l.genre for l in genres]
 
-    return render_template("show_art_page.html")
+    return render_template("show_art_page.html", all_artists=all_artists, genres=genres)
 
 
 @app.route('/artists_artwork')
@@ -83,18 +86,48 @@ def pick_artists_art():
     return render_template("artwork_page.html")
 
 
+@app.route('/get_genre', methods=["POST"])
+def get_genre_func():
+
+    artist_id = request.form.get("artist_id")
+
+    artwork = db.session.query(Artwork.genre, Artwork.artist_id).filter_by(artist_id=artist_id).distinct()
+
+    genres = []
+    for art in artwork:
+        genres.append(art.genre)
+
+    return jsonify(genres)
+
+
 @app.route('/artists_artwork', methods=["POST"])
 def show_artists_art():
-    """show artwork of a particular Artist"""
+    """show artwork of a particular Artist and genre"""
+    #import pdb; pdb.set_trace()
+    artist_id = request.form.get('artist')
+    genre = request.form.get('genre_picked')
 
-    artist = request.form.get('artist')
-    genre = request.form.get('genre')
+    if artist_id == 'all':
+        artist_name = "All Artists"
+        if genre == 'all':
+            try:
+                artwork_list = Artwork.query.all()
+            except:
+                artwork_list = None
+        else:
+            artwork_list = Artwork.query.filter_by(genre=genre).all()
+  
+    else:
+        curr_artist = Artist.query.filter_by(artist_id=artist_id).first()
+        
+        if genre == 'all':
+            artwork_list = Artwork.query.filter_by(artist_id=artist_id).all()
+        else:
+            artwork_list = Artwork.query.filter_by(artist_id=artist_id, genre=genre).all()
+        
+        artist_name = "%s %s" % (curr_artist.user.first_name, curr_artist.user.last_name)
 
-    # if artist == 'kushlani':
-    #     # check to see if user exists
-    artwork_list = Artwork.query.filter_by(artist_id=1).all()
-
-    return render_template("artwork_page.html", artwork_list=artwork_list) 
+    return render_template("artwork_page.html", artist_name=artist_name, artwork_list=artwork_list) 
 
 
 @app.route('/share_art_form')
@@ -109,70 +142,86 @@ def share_art_social_media():
     """share art onsocial media"""
 
     art_list = request.form.getlist('artwork')
+    social_media_list = request.form.getlist('social_media')
 
-    print '###########################################'
-    print art_list
-    print type(art_list)
-    print len(art_list)
-    # # artist = request.form.get('artist')
-    # # genre = request.form.get('genre')
-    # # frequency = request.form.get('frequency')
-    # # interval = request.form.get('interval')
-    # # number = request.form.get('number')
-    # art_id = request.form.get("artwork")
-    # #artworks = Artwork.query.filter_by(artist_id=1).all()
-    # for a_num in range(len(art_list))
-    #     a = Artwork.query.filter_by(artwork_id=int(art_list[a_num])).first()
-    #     curr_artist = Artist.query.filter_by(artist_id=1).first()
+    for a_num in art_list:
+        a = Artwork.query.filter_by(artwork_id=int(a_num)).first()
+        curr_artist = Artist.query.filter_by(artist_id=1).first()
 
-    #     a_firstname = curr_artist.user.first_name
-    #     a_lastname =  curr_artist.user.last_name
-    #     a_website = curr_artist.website
+        a_firstname = curr_artist.user.first_name
+        a_lastname =  curr_artist.user.last_name
+        a_website = curr_artist.website
 
-    #     helper = HelperFunctions()
+        helper = HelperFunctions()
 
-    #     caption = helper.create_caption(firstname=a_firstname, lastname=a_lastname,
-    #      title=a.title, height=a.height, length=a.length, medium=a.medium, substrate=a.substrate, website=a_website, genre=a.genre)
+        caption = helper.create_caption(firstname=a_firstname, lastname=a_lastname,
+         title=a.title, height=a.height, length=a.length, medium=a.medium, substrate=a.substrate, website=a_website, genre=a.genre)
 
-    #     caption = caption[:144]  # tweets can only be a max of 144 chars
+        if "twitter" in social_media_list:
+            caption = caption[:144]  # tweets can only be a max of 144 chars
 
-    #     ArtAnnounceTwitter.post_tweet(caption, a.url)
+            ArtAnnounceTwitter.post_tweet(caption, a.url)
+
+        if "facebook" in social_media_list:
+            
+            ArtAnnounceFacebook.post_to_fb(caption, a.url)
 
     return render_template("welcome.html")
 
 
 
-    # # for i in range (0, int(number)):
-    # #     rand = random.randint(0,(len(artworks)-1))
-    # #     a = artworks[rand]
-    # #     a_firstname = curr_artist.user.first_name
-    # #     a_lastname =  curr_artist.user.last_name
-    # #     a_website = curr_artist.website
-    # #     # include artist name?
+@app.route('/delete_art', methods=["POST"])
+def delete_art():
+    """Delete Selected Artwork"""
 
-    # #     helper = HelperFunctions()
+    json_list = request.form.get("artlist")
+    print json_list
+    selected_art = json.loads(json_list)  # converts string object to list
+    print range(len(selected_art))
+    
+    for i in range(len(selected_art)):
+        art_id = eval(selected_art[i])
+        to_be_deleted = Artwork.query.filter_by(artwork_id=art_id).first()
+        db.session.delete(to_be_deleted)
+    db.session.commit()        
+    #return json.dumps('Artwork Deleted')
+    return 'Artwork Deleted'
 
-    # #     caption = helper.create_caption(firstname=a_firstname, lastname=a_lastname,
-    # #      title=a.title, height=a.height, length=a.length, medium=a.medium, substrate=a.substrate, website=a_website, genre=a.genre)
 
-    # #     caption = caption[:144]  # tweets can only be a max of 144 chars
+@app.route('/move_art', methods=["POST"])
+def move_art():
+    """Move selected Artwork to bottom of table"""
 
-    # #     ArtAnnounceTwitter.post_tweet(caption, a.url)
-
-    #return render_template("welcome.html")
-
+    json_list = request.form.get("artlist")
+    print json_list
+    selected_art = json.loads(json_list)  # converts string object to list
+    print range(len(selected_art))
+    to_be_moved = []
+    for i in range(len(selected_art)):
+        art_id = eval(selected_art[i])
+        a = Artwork.query.filter_by(artwork_id=art_id).first()
+        copy = Artwork(artist_id=a.artist_id, title=a.title, medium=a.medium, 
+        substrate=a.substrate, genre=a.genre, height=a.height, length=a.length,
+        depth=a.depth, year_created=a.year_created, url=a.url) 
+        db.session.add(copy)
+        db.session.delete(a)
+    db.session.commit()
+    #return json.dumps('Artwork Deleted')
+    
+    return 'Artwork moved to the bottom.'
 
 @app.route('/add_art_form')
 def add_art():
     """show page to add artwork"""
+    all_artists = Artist.query.all()
 
-    return render_template("add_art_page.html")
+    return render_template("add_art_page.html", all_artists=all_artists)
 
 
 @app.route('/add_art', methods=["POST"])
 def add_art_db():
     """add artwork to database"""
-    artist = request.form.get('artist')
+    artist_id = request.form.get('artist')
     title = request.form.get('title')
     medium = request.form.get('medium')
     substrate = request.form.get('substrate')
@@ -184,7 +233,7 @@ def add_art_db():
     url = request.form.get('url')
 
     # add artwork to db
-    artwork = Artwork(artist_id=1, title=title, medium=medium, 
+    artwork = Artwork(artist_id=artist_id, title=title, medium=medium, 
         substrate=substrate, genre=genre, height=height, length=length,
         depth=depth, year_created=year, url=url)
 
@@ -249,6 +298,7 @@ def register_process():
 
         flash('You were successfully registered %s.' % session['email'])
         return redirect("/")
+
     else:   # login exists in database.
         flash('login: %s already exists please pick another.' % login)
         return redirect('/register')

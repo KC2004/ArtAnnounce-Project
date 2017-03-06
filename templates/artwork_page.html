@@ -1,12 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
-"
-<h5  align="center">Artwork</h5>
-<h5  align="center">by</h5>
-<h3 align="center"><i>Kushlani Jayasinha</i></h3>
+
+<h3 align="center"><i>{{ artist_name }}</i></h3>
 <h3></h3>
 
-<form action='/share_art' method="POST">
+<form id="artwork_form" action='/share_art' method="POST">
 
   <table >
   <div class='row' >
@@ -24,7 +22,7 @@
   </div>
     
   </table>
-
+  <br>
 
 <!-- <table class="table">
         <td class="col-xs-3">
@@ -35,9 +33,73 @@
         </td>
     </tr>
 </table> -->
-
-  <input type="submit" value="Share Art">
-  <a id='cancel' href="/welcome">Cancel</a>
+  <input class='select_social_media' type=checkbox name="social_media" value="twitter">twitter
+  <input class='select_social_media' type=checkbox name="social_media" value="facebook">facebook
+  <br>
+  <button id = "share_art" type="submit" value="Share Art">Share Art</button>
+  <button id = "move_art" type="button"  value="Move Art">Move Art</button>
+  <button id = "delete_art" type="button" value="Delete Art">Delete Art</button>
+  <button <a id='cancel' href="/welcome">Cancel</a></button>
 </form>
-{% endblock %}
 
+
+<script src="https://code.jquery.com/jquery.js"></script>
+<script>
+    "use strict";
+    console.log("hi");
+    var shareArt = $("#share_art");
+    var deleteArt = $("#delete_art");  
+    var moveArt = $("#move_art");
+
+  function art_delete(evt) {
+      evt.preventDefault();
+ 
+      var artList = $(".select_art:checked");
+
+      var artIDs = [];
+      var items = artList.length;
+      for (var i=0; i < items; i++){
+        artIDs.push(artList[i].value);
+      }
+      console.log(artIDs);
+
+      var r = confirm("Are you sure you want to DELETE art?");
+      if (r == true) {
+           
+        var ArtList = {"artlist": JSON.stringify(artIDs)};
+
+        console.log(JSON.stringify(artIDs));
+
+        $.post("/delete_art", ArtList, function(results) {alert(results);});
+      }
+  }
+
+
+  function art_move(evt) {
+      evt.preventDefault();
+ 
+      var artList = $(".select_art:checked");
+
+      var artIDs = [];
+      var items = artList.length;
+      for (var i=0; i < items; i++){
+        artIDs.push(artList[i].value);
+      }
+      console.log(artIDs);
+
+      var r = confirm("Are you sure you want to MOVE art?");
+      if (r == true) {
+           
+        var ArtList = {"artlist": JSON.stringify(artIDs)};
+
+        console.log(JSON.stringify(artIDs));
+
+        $.post("/move_art", ArtList, function(results) {alert(results);});
+      }
+  }
+  
+  moveArt.on("click", art_move);
+  deleteArt.on("click", art_delete);
+
+</script>
+{% endblock %}

@@ -1,24 +1,62 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>Pick an Artist and Genre to show Artwork</h1>
+<h4>Pick an Artist and Genre to show Artwork</h4>
 
 <form action="/artists_artwork" method="POST">
+    
     Artist:
-    <select name="artist">
-      <option value="kushlani">Kushlani</option>
-      <option value="artist2">Artist2</option>
-      <option value="artist3">Artist3</option>
+    <select id="pick_artist" name="artist">
+      <option value="all">All </option>
+      {% for artist in all_artists %}
+        <option value={{ artist.artist_id }}>{{ artist.user.first_name }}  {{ artist.user.last_name }}</option>
+      {% endfor %}
     </select>
+    <a id = "register" href="/register">Register New Artist</a><br>
     Genre:
-    <select name="genre">
+    <select id="genre" name="genre_picked">
       <option value="all">All</option>
-      <option value="abstracts">Abstracts</option>
-      <option value="portraits">Portraits</option>
-      <option value="landscapes">Landscapes</option>
+      {% for gnr in genres %}
+        <option value={{ gnr }}>{{ gnr }}</option>
+      {% endfor %}
     </select>
-    <input type="submit" value="Show Art">
+    <!-- also option -to select by year -->
+    <br>
+    <input type="submit" value="Show Art"> &nbsp;&nbsp;&nbsp;
     <a id='cancel' href="/welcome">Cancel</a> 
 </form>
 
+<script src="https://code.jquery.com/jquery.js"></script>
+<script>
+"use strict";
+
+
+function success(data) {
+  var len = data.length;
+
+  $('#genre').empty();
+
+  $('#genre').append("<option value='all'>all</option>");
+
+  for ( var i = 0; i<len; i++) {
+      $('#genre').append("<option value="+data[i]+">"+data[i]+"</option>");
+  }
+}
+
+
+function get_genres(evt) {
+  evt.preventDefault();
+
+  console.log("write something");
+
+  var Artist_id = {"artist_id": $('#pick_artist').val()};
+
+  $.post("/get_genre", Artist_id, success);
+  }
+ 
+
+$("#pick_artist").on("change", get_genres);
+
+<!-- make an ajax call the query available genres to fill dropbox -->
+</script>
 {% endblock %}
