@@ -1,6 +1,23 @@
 {% extends 'base.html' %}
-{% block content %}
 
+{% block head %}
+
+<style>
+.container {
+    background-color: red;
+    background-size: cover;
+    background: url(pattern.png) no-repeat center center;
+}
+.container-fluid{
+    min-height: 100%;
+    background-color: lightgrey;
+
+}
+</style>
+
+{% endblock %}
+{% block content %}
+<div class="container-fluid">
 <h1>Welcome to ArtAnnounce!</h1>
 
 <table class="table">
@@ -17,6 +34,8 @@
 
     </tr>
 </table>
+<img src=https://fasoimages-4cde.kxcdn.com/25287_954964l+v=201609181617c201609181617error/heaven.jpg height="500"width="800">
+</div>
 
 
 {% endblock %}

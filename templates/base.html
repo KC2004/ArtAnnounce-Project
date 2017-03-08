@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-  <title>Artshare</title>
+  <title>ArtAnnounce</title>
   {% with messages = get_flashed_messages() %}
   {% if messages %}
     <ul class=flashes>
@@ -10,17 +10,18 @@
     {% endfor %}
     </ul>
   {% endif %}
-{% endwith %}
+  {% endwith %}
 
     <!-- Bootstrap links -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
     <!-- Google fonts link -->
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Raleway" >
+
+    {% block head %}{% endblock %}
 </head>
 
 <body>
-  <hr>
 
   {% block content %} put your content here {% endblock %}
 

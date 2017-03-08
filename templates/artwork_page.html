@@ -1,11 +1,34 @@
 {% extends 'base.html' %}
-{% block content %}
+{% block head %}
 
+<style>
+.container {
+    background-color: red;
+    background-size: cover;
+    background: url(pattern.png) no-repeat center center;
+}
+.container-fluid{
+    min-height: 100%;
+    background-color: lightgrey;
+
+}
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="container-fluid">
 <h3 align="center"><i>{{ artist_name }}</i></h3>
 <h3></h3>
 
 <form id="artwork_form" action='/share_art' method="POST">
-
+<input class='select_social_media' type=checkbox name="social_media" value="twitter">twitter
+  <input class='select_social_media' type=checkbox name="social_media" value="facebook">facebook
+  <br>
+  <button id = "share_art" type="submit" value="Share Art">Share Art</button>
+  <button id = "move_art" type="button"  value="Move Art">Move Art</button>
+  <button id = "delete_art" type="button" value="Delete Art">Delete Art</button>
+  <button <a id='cancel' href="/welcome">Cancel</a></button>
   <table >
   <div class='row' >
     {% for art in artwork_list %}
@@ -24,24 +47,10 @@
   </table>
   <br>
 
-<!-- <table class="table">
-        <td class="col-xs-3">
-            <a href="/add_art_form" id="add_art_form">Add Artwork</a>
-        </td>
-        <td class="col-xs-3">
-            <a href="/share_art_form" id="share_art_form">Share Artwork</button>
-        </td>
-    </tr>
-</table> -->
-  <input class='select_social_media' type=checkbox name="social_media" value="twitter">twitter
-  <input class='select_social_media' type=checkbox name="social_media" value="facebook">facebook
-  <br>
-  <button id = "share_art" type="submit" value="Share Art">Share Art</button>
-  <button id = "move_art" type="button"  value="Move Art">Move Art</button>
-  <button id = "delete_art" type="button" value="Delete Art">Delete Art</button>
-  <button <a id='cancel' href="/welcome">Cancel</a></button>
-</form>
 
+  
+</form>
+</div>
 
 <script src="https://code.jquery.com/jquery.js"></script>
 <script>

@@ -1,7 +1,26 @@
 {% extends 'base.html' %}
 {% block content %}
 
-<h1>Add Artwork</h1>
+{% block head %}
+
+<style>
+.container {
+    background-color: red;
+    background-size: cover;
+    background: url(pattern.png) no-repeat center center;
+    background: url(https://fasoimages-4cde.kxcdn.com/25287_954964l+v=201609181617c201609181617error/heaven.jpg) no-repeat center center;
+    }
+.container-fluid{https://fasoimages-4cde.kxcdn.com/25287_954964l+v=201609181617c201609181617error/heaven.jpg
+    min-height: 100%;
+    background-color: lightgrey;
+    background-size: cover;
+
+}
+</style>
+
+{% endblock %}
+<div class="container-fluid">
+<h1 style="text-align:center">Add Artwork</h1>
 
 <form action="/add_art" method="POST">
     Artist:
@@ -77,4 +96,5 @@
     <input type="submit" value="Add Artwork">
     <a id='cancel' href="/welcome">Cancel</a>
 </form>
+</div>
 {% endblock %}

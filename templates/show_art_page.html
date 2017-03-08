@@ -1,10 +1,21 @@
 {% extends 'base.html' %}
+
+{% block head %}
+<style>
+.container-fluid{
+    min-height: 100%;
+    background-color: lightgrey;
+
+}
+</style>
+{% endblock %}
 {% block content %}
 
-<h4>Pick an Artist and Genre to show Artwork</h4>
+<div class="container-fluid">
+<h3 align="center">Pick an Artist and Genre to show Artwork</h3>
 
 <form action="/artists_artwork" method="POST">
-    
+  
     Artist:
     <select id="pick_artist" name="artist">
       <option value="all">All </option>
@@ -23,8 +34,11 @@
     <!-- also option -to select by year -->
     <br>
     <input type="submit" value="Show Art"> &nbsp;&nbsp;&nbsp;
-    <a id='cancel' href="/welcome">Cancel</a> 
+    <a id='cancel' href="/welcome">Cancel</a>
+
 </form>
+<img src=https://fasoimages-4cde.kxcdn.com/25287_954964l+v=201609181617c201609181617error/heaven.jpg height="500"width="800">
+</div>
 
 <script src="https://code.jquery.com/jquery.js"></script>
 <script>
